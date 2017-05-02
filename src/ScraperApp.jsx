@@ -12,18 +12,18 @@ class ScraperApp extends React.Component {
 
     this.apiUrl = "http://localhost:8000"
 
-    this.flexCell = {
+    this.leftColumn = {
       "flex": "1",
     }
 
-    this.flexLayout = {
-      "display": "flex"
+    this.rightColumn = {
+      "flex": "2",
     }
 
     this.state = { 
       scrapers: [],
       logs: [],
-      selected: null
+      selected: {}
     }
   }
 
@@ -58,43 +58,56 @@ class ScraperApp extends React.Component {
   }
 
   handleSelect(item) {
-      
     var self = this;
-    this.setState({ 'selected': item.module });
+    this.setState({ 'selected': item });
     this.getLogsList(item.module)
 
   }
 
-  handleStart() {
+  handleScrape() {
     var self = this;
 
-    this.setItemState(this.state.selected, "Running")
+    this.setItemState(this.state.selected, "Scraping")
 
-    Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected}, "POST", function(res) {
-
+    Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
         if (res.error) {
-            self.setItemState(self.state.selected, "Error")
+            self.state.selected.state = "Error: " + res.error
         }  else {
-            self.setItemState(self.state.selected, "")
+           self.state.selected.state = "Scraped"
         }
-
-        self.getPhoList();
-        self.handleSelect({'module': self.state.selected});
-
     })
 
+  }
+
+  handleSubmit() {
+    var self = this;
+
+    this.setItemState(this.state.selected, "Submitting")
+
+    Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
+
+      if (res.error) {
+          self.state.selected.state = "Error: " + res.error
+      }  else {
+          self.state.selected.state ="Submitted"
+      }
+      
+      self.getPhoList();
+      self.handleSelect({'module': self.state.selected.module});
+
+    })
   }
 
   render(){
     return (
       <div>
-        <AppBar title='Doctor Pricer Scrapers'/>
-        <div style={this.flexLayout}>
-          <div style={this.flexCell}>
+        <AppBar title='DoctorPricer Scrapers'/>
+        <div style= {{"display": "flex"}}>
+          <div style={this.leftColumn}>
             <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
           </div>
-          <div style={this.flexCell}>
-            <LogsList selected={this.state.selected} list={this.state.logs} start={this.handleStart.bind(this)}/>
+          <div style={this.rightColumn}>
+            <LogsList selected={this.state.selected} list={this.state.logs} last_scraped={this.state.last_scraped} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
           </div>
         </div>
       </div>

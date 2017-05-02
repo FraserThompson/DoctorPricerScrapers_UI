@@ -14,6 +14,19 @@ class LogsListItem extends React.Component {
     }
   }
 
+  formatDate(date) {
+
+    var date_obj = new Date(date);
+    var day = date_obj.getDate();
+    var monthIndex = date_obj.getMonth();
+    var year = date_obj.getFullYear();
+
+    var hours = date_obj.getHours();
+    var minutes = date_obj.getMinutes();
+
+    return day + '/' + monthIndex + '/' + year + " " + hours + ":" + minutes;
+  }
+
   handleTabChange(index) {
     this.setState({index});
   };
@@ -21,19 +34,21 @@ class LogsListItem extends React.Component {
   render(){
     return (
       <Card>
-        <CardTitle title={this.props.id + " - " + this.props.date}/>
+        <CardTitle title={this.props.id + " - " + this.formatDate(this.props.date)}/>
         <CardText>
           <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
-            <Tab label={"Errors " + this.props.errors.length}>
+            <Tab label={"Errors " + this.props.errors_count}>
               <pre>{this.props.errors}</pre>
             </Tab>
-            <Tab label={"Warnings " + this.props.warnings.length}>
+            <Tab label={"Warnings " + this.props.warnings_count}>
               <pre>{this.props.warnings}</pre>
             </Tab>
-            <Tab label={"Changes " + this.props.changes.length}>
-              <pre>{this.props.changes}</pre>
-            </Tab>
-            <Tab label={"Scraped " + this.props.scraped.length}>
+            {this.props.changes.length > 2  && 
+              <Tab label={"Changes"}>
+                <pre>{this.props.changes}</pre>
+              </Tab>
+            }
+            <Tab label={"Scraped " + this.props.scraped_count}>
               <pre>{this.props.scraped}</pre>
             </Tab>
           </Tabs>
