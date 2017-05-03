@@ -32,7 +32,7 @@ class LogsList extends React.Component {
           warnings={JSON.stringify(item.warnings, null, 2)}
           warnings_count={item.warnings.length}
           errors={JSON.stringify(item.errors, null, 2)}
-          errors_count={item.warnings.length}
+          errors_count={item.errors.length}
           changes={JSON.stringify(item.changes, null, 2)}
         />
       );
@@ -47,16 +47,16 @@ class LogsList extends React.Component {
               <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
               <Button type="submit" onClick={this.props.submit} label="Submit"/> 
             </h1>
+            <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
+              <Tab label="Last Scrape">
+                <pre>{JSON.stringify(this.props.selected.last_scrape, null, 2)}</pre>
+              </Tab>
+              <Tab label="Logs">
+                {logsList}
+              </Tab>
+            </Tabs>
           </div>
         }
-        <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
-            <Tab label="Last Scrape">
-              <pre>{this.props.selected.last_scrape}</pre>
-            </Tab>
-            <Tab label="Logs">
-              {logsList}
-            </Tab>
-          </Tabs>
       </div>
     )
   }

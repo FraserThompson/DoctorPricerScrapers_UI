@@ -13,17 +13,21 @@ class ScraperApp extends React.Component {
     this.apiUrl = "http://localhost:8000"
 
     this.leftColumn = {
+      "height": "90vh",
+      "overflow": "auto",
       "flex": "1",
     }
 
     this.rightColumn = {
-      "flex": "2",
+      "height": "90vh",
+      "overflow": "auto",
+      "flex": "2"
     }
 
     this.state = { 
       scrapers: [],
       logs: [],
-      selected: {}
+      selected: null
     }
   }
 
@@ -67,13 +71,15 @@ class ScraperApp extends React.Component {
   handleScrape() {
     var self = this;
 
-    this.setItemState(this.state.selected, "Scraping")
+    this.setItemState(this.state.selected.module, "Scraping")
 
     Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
         if (res.error) {
-            self.state.selected.state = "Error: " + res.error
+            self.setItemState(this.state.selected.module, "Error: " + res.error)
         }  else {
-           self.state.selected.state = "Scraped"
+            self.setItemState(this.state.selected.module, "Scraped")
+            self.getPhoList();
+            self.handleSelect(self.state.selected);
         }
     })
 
@@ -82,18 +88,18 @@ class ScraperApp extends React.Component {
   handleSubmit() {
     var self = this;
 
-    this.setItemState(this.state.selected, "Submitting")
+    this.setItemState(this.state.selected.module, "Submitting")
 
     Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
 
       if (res.error) {
-          self.state.selected.state = "Error: " + res.error
+          self.setItemState(this.state.selected.module, "Error: " + res.error)
       }  else {
-          self.state.selected.state ="Submitted"
+          self.setItemState(this.state.selected.module, "Submitted")
       }
       
       self.getPhoList();
-      self.handleSelect({'module': self.state.selected.module});
+      self.handleSelect(self.state.selected);
 
     })
   }
@@ -107,7 +113,7 @@ class ScraperApp extends React.Component {
             <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
           </div>
           <div style={this.rightColumn}>
-            <LogsList selected={this.state.selected} list={this.state.logs} last_scraped={this.state.last_scraped} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+            <LogsList selected={this.state.selected} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
           </div>
         </div>
       </div>

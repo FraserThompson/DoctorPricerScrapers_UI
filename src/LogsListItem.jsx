@@ -34,7 +34,7 @@ class LogsListItem extends React.Component {
   render(){
     return (
       <Card>
-        <CardTitle title={this.props.id + " - " + this.formatDate(this.props.date)}/>
+        <CardTitle title={this.formatDate(this.props.date)}/>
         <CardText>
           <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
             <Tab label={"Errors " + this.props.errors_count}>
@@ -48,7 +48,7 @@ class LogsListItem extends React.Component {
                 <pre>{this.props.changes}</pre>
               </Tab>
             }
-            <Tab label={"Scraped " + this.props.scraped_count}>
+            <Tab label={"Submitted " + this.props.scraped_count}>
               <pre>{this.props.scraped}</pre>
             </Tab>
           </Tabs>
