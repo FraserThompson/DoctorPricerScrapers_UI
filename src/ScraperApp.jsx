@@ -75,11 +75,11 @@ class ScraperApp extends React.Component {
 
     Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
         if (res.error) {
-            self.setItemState(this.state.selected.module, "Error: " + res.error)
+            console.log(res.error);
+            self.setItemState(self.state.selected.module, "Error: " + res.error)
         }  else {
-            self.setItemState(this.state.selected.module, "Scraped")
-            self.getPhoList();
-            self.handleSelect(self.state.selected);
+            self.setItemState(self.state.selected.module, "Scraped")
+            self.state.selected.last_scrape = JSON.parse(res.data);
         }
     })
 
@@ -93,13 +93,11 @@ class ScraperApp extends React.Component {
     Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
 
       if (res.error) {
-          self.setItemState(this.state.selected.module, "Error: " + res.error)
+          self.setItemState(self.state.selected.module, "Error: " + res.error)
       }  else {
-          self.setItemState(this.state.selected.module, "Submitted")
+          self.setItemState(self.state.selected.module, "Submitted")
+          self.getLogsList(self.state.selected.module)
       }
-      
-      self.getPhoList();
-      self.handleSelect(self.state.selected);
 
     })
   }
