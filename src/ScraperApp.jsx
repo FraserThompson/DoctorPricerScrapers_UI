@@ -2,6 +2,8 @@ import React from 'react';
 import PHOList from './PHOList';
 import Utils from './Utils';
 import LogsList from './LogsList';
+import Login from './Login';
+import Navigation from 'react-toolbox/lib/navigation';
 
 import AppBar from 'react-toolbox/lib/app_bar';
 
@@ -26,6 +28,7 @@ class ScraperApp extends React.Component {
 
     this.state = { 
       scrapers: [],
+      sessionToken: sessionStorage.getItem('dpSessionToken'),
       logs: [],
       selected: null
     }
@@ -81,7 +84,7 @@ class ScraperApp extends React.Component {
             self.setItemState(self.state.selected.module, "Scraped")
             self.state.selected.last_scrape = JSON.parse(res.data);
         }
-    })
+    }, this.state.sessionToken)
 
   }
 
@@ -99,13 +102,27 @@ class ScraperApp extends React.Component {
           self.getLogsList(self.state.selected.module)
       }
 
-    })
+    }, this.state.sessionToken)
+  }
+
+  handleLogin(token) {
+    sessionStorage.setItem('dpSessionToken', token);
+    this.setState({'sessionToken': token});
+  }
+
+  handleLogout() {
+    sessionStorage.removeItem('dpSessionToken');
+    this.setState({'sessionToken': ''});
   }
 
   render(){
     return (
       <div>
-        <AppBar title='DoctorPricer Scrapers'/>
+        <AppBar title='DoctorPricer Scrapers'>
+          <Navigation type='horizontal'>
+              <Login apiUrl={this.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
+          </Navigation>
+        </AppBar>
         <div style= {{"display": "flex"}}>
           <div style={this.leftColumn}>
             <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>

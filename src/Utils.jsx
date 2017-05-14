@@ -1,5 +1,5 @@
 const Utils = {
-  JsonReq (submitUrl, json, method, callback){
+  JsonReq (submitUrl, json, method, callback, sessionToken){
 
     var self = this;
 
@@ -9,6 +9,10 @@ const Utils = {
     req.overrideMimeType("application/json");
     req.open(method, submitUrl,  true);
     req.setRequestHeader("Content-Type", "application/json");
+
+    if (sessionToken) {
+      req.setRequestHeader("Authorization", "Token " + sessionToken);
+    }
 
     req.onload = function (e) {
       if (req.readyState === 4) {
@@ -29,7 +33,18 @@ const Utils = {
     }
 
     req.send(json ? JSON.stringify(json) : null);
+  },
+
+  formatDate(date) {
+
+    var date_obj = new Date(date);
+    var day = date_obj.getDate();
+    var monthIndex = date_obj.getMonth();
+    var year = date_obj.getFullYear();
+
+    return day + '/' + (monthIndex + 1) + '/' + year;
   }
+
 }
 
 export default Utils;

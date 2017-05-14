@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main.js","path":"C:\\dev\\dp_scrapers_ui\\public\\main.js"}]}}
+{"status":"done","chunks":{"main":[{"name":"main.js","path":"C:\\dev\\dp_scrapers_ui\\public\\main.js"},{"name":"0.13471de98400847ef5f7.hot-update.js","path":"C:\\dev\\dp_scrapers_ui\\public\\0.13471de98400847ef5f7.hot-update.js"}]},"error":"ModuleNotFoundError","message":"Module not found: Error: Can't resolve 'react-toolbox/lib/commons' in 'C:\\dev\\dp_scrapers_ui\\src'"}

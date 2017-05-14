@@ -14,19 +14,6 @@ class LogsListItem extends React.Component {
     }
   }
 
-  formatDate(date) {
-
-    var date_obj = new Date(date);
-    var day = date_obj.getDate();
-    var monthIndex = date_obj.getMonth();
-    var year = date_obj.getFullYear();
-
-    var hours = date_obj.getHours();
-    var minutes = date_obj.getMinutes();
-
-    return day + '/' + monthIndex + '/' + year + " " + hours + ":" + minutes;
-  }
-
   handleTabChange(index) {
     this.setState({index});
   };
@@ -34,7 +21,7 @@ class LogsListItem extends React.Component {
   render(){
     return (
       <Card>
-        <CardTitle title={this.formatDate(this.props.date)}/>
+        <CardTitle title={Utils.formatDate(this.props.date)}/>
         <CardText>
           <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
             <Tab label={"Errors " + this.props.errors_count}>
