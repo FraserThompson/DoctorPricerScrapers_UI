@@ -32,8 +32,7 @@ class Login extends React.Component {
         if (res.error) {
           console.log(res.error)
         }  else {
-          console.log(res);
-          self.props.loginCallback(JSON.parse(res.data).token);
+          self.props.loginCallback(JSON.parse(res.data).token, self.state.username);
           self.setState({active: !self.state.active});
         }
 
@@ -58,7 +57,7 @@ class Login extends React.Component {
             <Link href='#' onClick={this.handleToggle} label='Login' />
           }
           { this.props.sessionToken && 
-            <Link href='#' onClick={this.handleLogout} label='Logout' />
+              <Link href='#' onClick={this.handleLogout} label='Logout' />
           }
           <Dialog
               actions={this.actions}

@@ -44,8 +44,12 @@ class LogsList extends React.Component {
           <div className="header">
             <h1>
               {this.props.selected.name}
-              <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
-              <Button type="submit" onClick={this.props.submit} label="Submit"/> 
+              { this.props.sessionToken && 
+                <div>
+                  <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
+                  <Button type="submit" onClick={this.props.submit} label="Submit"/> 
+                </div>
+              }
             </h1>
             <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
               <Tab label="Last Scrape">

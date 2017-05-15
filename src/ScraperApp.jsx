@@ -29,6 +29,7 @@ class ScraperApp extends React.Component {
     this.state = { 
       scrapers: [],
       sessionToken: sessionStorage.getItem('dpSessionToken'),
+      username: sessionStorage.getItem('dpUsername'),
       logs: [],
       selected: null
     }
@@ -105,20 +106,25 @@ class ScraperApp extends React.Component {
     }, this.state.sessionToken)
   }
 
-  handleLogin(token) {
+  handleLogin(token, username) {
     sessionStorage.setItem('dpSessionToken', token);
-    this.setState({'sessionToken': token});
+    sessionStorage.setItem('dpUsername', username);
+    this.setState({'sessionToken': token, 'username': username});
   }
 
   handleLogout() {
     sessionStorage.removeItem('dpSessionToken');
-    this.setState({'sessionToken': ''});
+    sessionStorage.removeItem('dpUsername');
+    this.setState({'sessionToken': '', 'username': ''});
   }
 
   render(){
     return (
       <div>
         <AppBar title='DoctorPricer Scrapers'>
+          { this.state.username && 
+            <h4> Logged in as {this.state.username} </h4>
+          }
           <Navigation type='horizontal'>
               <Login apiUrl={this.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
           </Navigation>
@@ -128,7 +134,7 @@ class ScraperApp extends React.Component {
             <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
           </div>
           <div style={this.rightColumn}>
-            <LogsList selected={this.state.selected} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+            <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
           </div>
         </div>
       </div>
