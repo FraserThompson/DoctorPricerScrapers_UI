@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "react": "^15.5.4",
+    "react-css-themr": "^2.1.2",
     "react-dom": "^15.5.4"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@ class PHOListItem extends React.Component {
 
   render(){
     return (
-      <ListItem caption={this.props.name} legend={"Last Run: " + Utils.formatDate(this.props.last_run) + " Number of Practices: " + this.props.number_of_practices + " " + (this.props.state ? this.props.state : "")} onClick={this.props.select}/>
+      <ListItem caption={this.props.name} legend={"Last Run: " + Utils.formatDate(this.props.last_run) + ", Number of Practices: " + this.props.number_of_practices + " " + (this.props.state ? this.props.state : "")} onClick={this.props.select}/>
     )
   }
 }

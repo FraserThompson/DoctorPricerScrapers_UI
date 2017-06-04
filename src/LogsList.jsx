@@ -44,13 +44,13 @@ class LogsList extends React.Component {
           <div className="header">
             <h1>
               {this.props.selected.name}
-              { this.props.sessionToken && 
-                <div>
-                  <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
-                  <Button type="submit" onClick={this.props.submit} label="Submit"/> 
-                </div>
-              }
             </h1>
+            { this.props.sessionToken && 
+              <div>
+                <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
+                <Button type="submit" onClick={this.props.submit} label="Submit"/> 
+              </div>
+            }
             <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
               <Tab label="Last Scrape">
                 <pre>{JSON.stringify(this.props.selected.last_scrape, null, 2)}</pre>

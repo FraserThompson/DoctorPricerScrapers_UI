@@ -7,6 +7,9 @@ import Navigation from 'react-toolbox/lib/navigation';
 
 import AppBar from 'react-toolbox/lib/app_bar';
 
+import { ThemeProvider } from 'react-css-themr';
+import theme from './theme';
+
 class ScraperApp extends React.Component {
 
   constructor(props) {
@@ -101,6 +104,7 @@ class ScraperApp extends React.Component {
       }  else {
           self.setItemState(self.state.selected.module, "Submitted")
           self.getLogsList(self.state.selected.module)
+          self.getPhoList()
       }
 
     }, this.state.sessionToken)
@@ -120,24 +124,26 @@ class ScraperApp extends React.Component {
 
   render(){
     return (
-      <div>
-        <AppBar title='DoctorPricer Scrapers'>
-          { this.state.username && 
-            <h4> Logged in as {this.state.username} </h4>
-          }
-          <Navigation type='horizontal'>
-              <Login apiUrl={this.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
-          </Navigation>
-        </AppBar>
-        <div style= {{"display": "flex"}}>
-          <div style={this.leftColumn}>
-            <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
-          </div>
-          <div style={this.rightColumn}>
-            <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+      <ThemeProvider theme={theme}>
+        <div>
+          <AppBar title='DoctorPricer Scrapers'>
+            { this.state.username && 
+              <h4> Logged in as {this.state.username} </h4>
+            }
+            <Navigation type='horizontal'>
+                <Login apiUrl={this.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
+            </Navigation>
+          </AppBar>
+          <div style= {{"display": "flex"}}>
+            <div style={this.leftColumn}>
+              <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
+            </div>
+            <div style={this.rightColumn}>
+              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+            </div>
           </div>
         </div>
-      </div>
+      </ThemeProvider>
     )
   }
 }
