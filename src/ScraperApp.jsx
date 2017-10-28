@@ -15,7 +15,7 @@ class ScraperApp extends React.Component {
   constructor(props) {
     super(props);
 
-    this.apiUrl = "http://localhost:8000"
+    this.apiUrl = "https://localhost:8443"
 
     this.leftColumn = {
       "height": "90vh",

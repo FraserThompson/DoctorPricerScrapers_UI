@@ -45,6 +45,7 @@ class LogsList extends React.Component {
             <h1>
               {this.props.selected.name}
             </h1>
+            <a href={this.props.selected.website}>{this.props.selected.website}</a>
             { this.props.sessionToken && 
               <div>
                 <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
@@ -57,6 +58,9 @@ class LogsList extends React.Component {
               </Tab>
               <Tab label="Logs">
                 {logsList}
+              </Tab>
+              <Tab label="Averages">
+                <pre>{JSON.stringify(this.props.selected.average_prices, null, 2)}</pre>
               </Tab>
             </Tabs>
           </div>
