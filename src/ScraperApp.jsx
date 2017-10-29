@@ -58,11 +58,14 @@ class ScraperApp extends React.Component {
     this.getPhoList();
   }
 
-  setItemState(module, state) {
+  setItemState(module, state, last_scrape) {
     var self = this
 
     this.state.scrapers.forEach(function(item, index) {
-        if (item.module == module ) self.state.scrapers[index].state = state;
+        if (item.module == module ) {
+          self.state.scrapers[index].state = state;
+          self.state.scrapers[index].last_scrape = last_scrape ? last_scrape : null;
+        }
     })
 
     this.setState({ 'scrapers': this.state.scrapers });
@@ -78,17 +81,56 @@ class ScraperApp extends React.Component {
   handleScrape() {
     var self = this;
 
-    this.setItemState(this.state.selected.module, "Scraping")
-
     Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
         if (res.error) {
+
             console.log(res.error);
             self.setItemState(self.state.selected.module, "Error: " + res.error)
+
         }  else {
-            self.setItemState(self.state.selected.module, "Scraped")
-            self.state.selected.last_scrape = JSON.parse(res.data);
+
+            self.setItemState(self.state.selected.module, "Scraping")
+
+            var json_res = JSON.parse(res.data);
+            self.state.selected.status = {'count': 0, 'task_id': json_res.task_id};
+
+            self.state.selected.timer = setInterval(self.updateTask.bind(self, self.state.selected), 5000);
         }
     }, this.state.sessionToken)
+
+  }
+
+  updateTask(selected) {
+    var self = this;
+
+    console.log('Checking the status of ' + selected.status.task_id + ' from ' + selected.module);
+
+    Utils.JsonReq(this.apiUrl + "/dp/scrape?task_id=" + selected.status.task_id, null, "GET", function(res) {
+        selected.status.count = selected.status.count + 1;
+
+        if (res.error) {
+
+            clearInterval(selected.timer)
+            self.setItemState(self.state.selected.module, "Error: " + res.error)
+            console.log(res.error);
+
+        }  else {
+
+            var json_res = JSON.parse(res.data);
+            console.log(json_res);
+
+            if (json_res.status == "SUCCESS") {
+              clearInterval(selected.timer)
+              self.setItemState(selected.module, "Scraped", JSON.parse(json_res.result));
+            } else if (json_res.status == "PENDING") {
+              self.setItemState(selected.module, "Scraping " + (selected.status.count * 5) + " seconds");
+            } else {
+              clearInterval(selected.timer)
+              self.setItemState(self.state.selected.module, "Error: " + json_res.result)
+            }
+
+        }
+    })
 
   }
 

@@ -30,7 +30,6 @@
   },
   "scripts": {
     "serve": "./node_modules/.bin/webpack-dev-server --content-base ./public --config ./webpack.config.js",
-    "watch": "./node_modules/.bin/webpack --watch",
     "build": "./node_modules/.bin/webpack"
   }
 }
