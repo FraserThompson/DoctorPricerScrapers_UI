@@ -83,10 +83,8 @@ class ScraperApp extends React.Component {
 
     Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
         if (res.error) {
-
             console.log(res.error);
             self.setItemState(self.state.selected.module, "Error: " + res.error)
-
         }  else {
 
             self.setItemState(self.state.selected.module, "Scraping")
@@ -100,12 +98,33 @@ class ScraperApp extends React.Component {
 
   }
 
+  handleSubmit() {
+    var self = this;
+
+    Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
+
+      if (res.error) {
+          console.log(res.error);
+          self.setItemState(self.state.selected.module, "Error: " + res.error)
+      }  else {
+
+          self.setItemState(self.state.selected.module, "Submitting")
+
+          var json_res = JSON.parse(res.data);
+          self.state.selected.status = {'count': 0, 'task_id': json_res.task_id};
+
+          self.state.selected.timer = setInterval(self.updateTask.bind(self, self.state.selected), 5000);
+      }
+
+    }, this.state.sessionToken)
+  }
+
   updateTask(selected) {
     var self = this;
 
     console.log('Checking the status of ' + selected.status.task_id + ' from ' + selected.module);
 
-    Utils.JsonReq(this.apiUrl + "/dp/scrape?task_id=" + selected.status.task_id, null, "GET", function(res) {
+    Utils.JsonReq(this.apiUrl + "/dp/task_status?task_id=" + selected.status.task_id, null, "GET", function(res) {
         selected.status.count = selected.status.count + 1;
 
         if (res.error) {
@@ -121,9 +140,11 @@ class ScraperApp extends React.Component {
 
             if (json_res.status == "SUCCESS") {
               clearInterval(selected.timer)
-              self.setItemState(selected.module, "Scraped", JSON.parse(json_res.result));
+              self.setItemState(selected.module, "Done", JSON.parse(json_res.result));
+              self.getLogsList(selected.module);
+              self.getPhoList();
             } else if (json_res.status == "PENDING") {
-              self.setItemState(selected.module, "Scraping " + (selected.status.count * 5) + " seconds");
+              self.setItemState(selected.module, json_res.meta + " " + (selected.status.count * 5) + " seconds");
             } else {
               clearInterval(selected.timer)
               self.setItemState(self.state.selected.module, "Error: " + json_res.result)
@@ -132,24 +153,6 @@ class ScraperApp extends React.Component {
         }
     })
 
-  }
-
-  handleSubmit() {
-    var self = this;
-
-    this.setItemState(this.state.selected.module, "Submitting")
-
-    Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
-
-      if (res.error) {
-          self.setItemState(self.state.selected.module, "Error: " + res.error)
-      }  else {
-          self.setItemState(self.state.selected.module, "Submitted")
-          self.getLogsList(self.state.selected.module)
-          self.getPhoList()
-      }
-
-    }, this.state.sessionToken)
   }
 
   handleLogin(token, username) {
