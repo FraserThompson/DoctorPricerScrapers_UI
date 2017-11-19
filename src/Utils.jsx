@@ -20,8 +20,8 @@ const Utils = {
           return_object.data = req.responseText;
           callback(return_object);
         } else {
-          console.error(req.statusText);
           return_object.error = req.statusText;
+          return_object.data = req.responseText;
           callback(return_object);
         }
       }
@@ -29,6 +29,7 @@ const Utils = {
 
     req.onerror = function (e) {
       return_object.error = req.statusText;
+      return_object.data = req.responseText;
       callback(return_object);
     }
 

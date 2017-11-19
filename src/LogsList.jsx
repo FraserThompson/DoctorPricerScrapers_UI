@@ -43,24 +43,25 @@ class LogsList extends React.Component {
         { this.props.selected != null && 
           <div className="header">
             <h1>
-              {this.props.selected.name}
+              {this.props.selected.props.name}
             </h1>
-            <a href={this.props.selected.website}>{this.props.selected.website}</a>
+            <a href={this.props.selected.props.website}>{this.props.selected.props.website}</a>
             { this.props.sessionToken && 
               <div>
                 <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 
+                <Button type="submit" onClick={this.props.stop} label="Stop"/> 
                 <Button type="submit" onClick={this.props.submit} label="Submit"/> 
               </div>
             }
             <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
               <Tab label="Last Scrape">
-                <pre>{JSON.stringify(this.props.selected.last_scrape, null, 2)}</pre>
+                <pre>{JSON.stringify(this.props.selected.props.last_scrape, null, 2)}</pre>
               </Tab>
               <Tab label="Logs">
                 {logsList}
               </Tab>
               <Tab label="Averages">
-                <pre>{JSON.stringify(this.props.selected.average_prices, null, 2)}</pre>
+                <pre>{JSON.stringify(this.props.selected.props.average_prices, null, 2)}</pre>
               </Tab>
             </Tabs>
           </div>

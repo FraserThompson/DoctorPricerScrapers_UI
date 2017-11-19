@@ -53,5 +53,8 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.css']
+  },
+  externals: {
+    config: JSON.stringify(require('./app_config.json')), //eslint-disable-line
   }
 }

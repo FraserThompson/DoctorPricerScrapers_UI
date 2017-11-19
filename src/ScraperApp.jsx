@@ -1,4 +1,5 @@
 import React from 'react';
+import config from 'config';
 import PHOList from './PHOList';
 import Utils from './Utils';
 import LogsList from './LogsList';
@@ -14,8 +15,6 @@ class ScraperApp extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.apiUrl = "https://localhost:8443"
 
     this.leftColumn = {
       "height": "90vh",
@@ -39,119 +38,128 @@ class ScraperApp extends React.Component {
   }
 
   getPhoList() {
-    var self = this;
 
-    Utils.JsonReq(this.apiUrl + '/dp/api/pho/', null, "GET", function(response) {
-        self.setState({ 'scrapers': JSON.parse(response.data) });
-    })
+    Utils.JsonReq(config.apiUrl + '/dp/api/pho/', null, "GET", function(response) {
+        this.setState({ 'scrapers': JSON.parse(response.data) });
+    }.bind(this))
   }
 
   getLogsList(name) {
-    var self = this;
 
-    Utils.JsonReq(this.apiUrl + '/dp/api/logs/?source=' + name, null, "GET", function(response) {
-        self.setState({ 'logs': JSON.parse(response.data) });
-    })
+    Utils.JsonReq(config.apiUrl + '/dp/api/logs/?source=' + name, null, "GET", function(response) {
+        this.setState({ 'logs': JSON.parse(response.data) });
+    }.bind(this))
   }
 
   componentDidMount() {
     this.getPhoList();
   }
 
-  setItemState(module, state, last_scrape) {
-    var self = this
-
+  setItemState(module, values) {
     this.state.scrapers.forEach(function(item, index) {
         if (item.module == module ) {
-          self.state.scrapers[index].state = state;
-          self.state.scrapers[index].last_scrape = last_scrape ? last_scrape : null;
+          
+          values.forEach(function(item, key) {
+            self.state.scrapers[index][key] = item;
+          })
         }
-    })
+    }.bind(this))
 
     this.setState({ 'scrapers': this.state.scrapers });
   }
 
   handleSelect(item) {
-    var self = this;
     this.setState({ 'selected': item });
-    this.getLogsList(item.module)
+    this.getLogsList(item.props.module)
+  }
+
+  handleStop() {
+
+    if (!this.state.selected.state.current_task_id) {
+      console.log("Can't stop because we're not doing anything");
+      return false;
+    }
+    
+    Utils.JsonReq(config.apiUrl + "/dp/task_status?task_id=" + this.state.selected.state.current_task_id + "&module=" + this.state.selected.props.module, null, "DELETE", function(res) {
+        if (res.error) {
+          console.log(res);
+        }  else {
+          this.state.selected.setState({"state": "Done", "time": null});
+          this.getLogsList(this.state.selected.module);
+          this.getPhoList();
+        }
+    }.bind(this), this.state.sessionToken)
 
   }
 
   handleScrape() {
-    var self = this;
 
-    Utils.JsonReq(this.apiUrl + "/dp/scrape", {"module": this.state.selected.module}, "POST", function(res) {
+    if (this.state.selected.state.current_task_id) {
+      console.log("Not scraping because we're already scraping");
+      return false;
+    }
+
+    Utils.JsonReq(config.apiUrl + "/dp/scrape", {"module": this.state.selected.props.module}, "POST", function(res) {
         if (res.error) {
-            console.log(res.error);
-            self.setItemState(self.state.selected.module, "Error: " + res.error)
+          console.log(res.error);
+          this.state.selected.setState({"state": "Error: " + res.error})
         }  else {
-
-            self.setItemState(self.state.selected.module, "Scraping")
-
-            var json_res = JSON.parse(res.data);
-            self.state.selected.status = {'count': 0, 'task_id': json_res.task_id};
-
-            self.state.selected.timer = setInterval(self.updateTask.bind(self, self.state.selected), 5000);
+          var json_res = JSON.parse(res.data);
+          this.state.selected.setState({"state": "Scraping", "current_task_id": json_res.task_id, "timer": setInterval(this.updateTask.bind(this, this.state.selected), 5000)});
         }
-    }, this.state.sessionToken)
+    }.bind(this), this.state.sessionToken)
 
   }
 
   handleSubmit() {
     var self = this;
 
-    Utils.JsonReq(this.apiUrl + "/dp/submit", {"module": this.state.selected.module}, "POST", function(res) {
+    Utils.JsonReq(config.apiUrl + "/dp/submit", {"module": this.state.selected.props.module}, "POST", function(res) {
 
       if (res.error) {
-          console.log(res.error);
-          self.setItemState(self.state.selected.module, "Error: " + res.error)
+        console.log(res.error);
+        this.state.selected.setState({"state": "Error: " + res.error})
       }  else {
-
-          self.setItemState(self.state.selected.module, "Submitting")
-
-          var json_res = JSON.parse(res.data);
-          self.state.selected.status = {'count': 0, 'task_id': json_res.task_id};
-
-          self.state.selected.timer = setInterval(self.updateTask.bind(self, self.state.selected), 5000);
+        var json_res = JSON.parse(res.data);
+        this.state.selected.setState({'state': 'Submitting', 'current_task_id': json_res.task_id,  "timer": setInterval(function() { return this.updateTask(this.state.selected) }.bind(this), 5000)});
       }
 
-    }, this.state.sessionToken)
+    }.bind(this), this.state.sessionToken)
   }
 
   updateTask(selected) {
-    var self = this;
 
-    console.log('Checking the status of ' + selected.status.task_id + ' from ' + selected.module);
+    console.log('Checking the status of ' + selected.state.current_task_id + ' from ' + selected.props.module);
 
-    Utils.JsonReq(this.apiUrl + "/dp/task_status?task_id=" + selected.status.task_id, null, "GET", function(res) {
-        selected.status.count = selected.status.count + 1;
+    Utils.JsonReq(config.apiUrl + "/dp/task_status?task_id=" + selected.state.current_task_id, null, "GET", function(res) {
 
         if (res.error) {
 
-            clearInterval(selected.timer)
-            self.setItemState(self.state.selected.module, "Error: " + res.error)
-            console.log(res.error);
+            clearInterval(selected.state.timer)
+            selected.setState({"state": "Error: " + res.data})
+            console.log(res);
 
         }  else {
 
             var json_res = JSON.parse(res.data);
             console.log(json_res);
 
+            selected.setState({"time": json_res.date_done})
+
             if (json_res.status == "SUCCESS") {
-              clearInterval(selected.timer)
-              self.setItemState(selected.module, "Done", JSON.parse(json_res.result));
-              self.getLogsList(selected.module);
-              self.getPhoList();
+              clearInterval(selected.state.timer)
+              selected.setState({"state": "Done", "time": null});
+              this.getLogsList(selected.module);
+              this.getPhoList();
             } else if (json_res.status == "PENDING") {
-              self.setItemState(selected.module, json_res.meta + " " + (selected.status.count * 5) + " seconds");
+              selected.setState({"state": json_res.meta});
             } else {
-              clearInterval(selected.timer)
-              self.setItemState(self.state.selected.module, "Error: " + json_res.result)
+              clearInterval(selected.state.timer)
+              selected.setState({"state": "Error: " + json_res.result})
             }
 
         }
-    })
+    }.bind(this))
 
   }
 
@@ -176,15 +184,15 @@ class ScraperApp extends React.Component {
               <h4> Logged in as {this.state.username} </h4>
             }
             <Navigation type='horizontal'>
-                <Login apiUrl={this.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
+                <Login apiUrl={config.apiUrl} sessionToken={this.state.sessionToken} loginCallback={this.handleLogin.bind(this)} logoutCallback={this.handleLogout.bind(this)}/>
             </Navigation>
           </AppBar>
           <div style= {{"display": "flex"}}>
             <div style={this.leftColumn}>
-              <PHOList list={this.state.scrapers} select={this.handleSelect.bind(this)}/>
+              <PHOList list={this.state.scrapers} handleSelect={this.handleSelect.bind(this)} updateTask={this.updateTask.bind(this)}/>
             </div>
             <div style={this.rightColumn}>
-              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
             </div>
           </div>
         </div>

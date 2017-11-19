@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "moment": "^2.19.2",
+    "node-sass": "^4.7.1",
     "react": "^15.5.4",
     "react-css-themr": "^2.1.2",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-moment": "^0.6.8"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -21,7 +24,7 @@
     "postcss-mixins": "^5.4.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-toolbox": "^2.0.0-beta.8",
+    "react-toolbox": "^2.0.0-beta.12",
     "sass-loader": "^6.0.3",
     "style-loader": "^0.16.1",
     "webpack": "^2.4.1",
