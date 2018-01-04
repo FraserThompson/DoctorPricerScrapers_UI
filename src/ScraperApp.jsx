@@ -4,6 +4,7 @@ import PHOList from './PHOList';
 import Utils from './Utils';
 import LogsList from './LogsList';
 import Login from './Login';
+import Error from './Error';
 import Navigation from 'react-toolbox/lib/navigation';
 
 import AppBar from 'react-toolbox/lib/app_bar';
@@ -33,6 +34,8 @@ class ScraperApp extends React.Component {
       sessionToken: sessionStorage.getItem('dpSessionToken'),
       username: sessionStorage.getItem('dpUsername'),
       logs: [],
+      errorActive: false,
+      errorMessage: "Error",
       selected: null
     }
   }
@@ -40,7 +43,11 @@ class ScraperApp extends React.Component {
   getPhoList() {
 
     Utils.JsonReq(config.apiUrl + '/dp/api/pho/', null, "GET", function(response) {
-        this.setState({ 'scrapers': JSON.parse(response.data) });
+        if (response.data) {
+          this.setState({ 'scrapers': JSON.parse(response.data) });
+        } else {
+          this.setState({ 'errorActive': true, 'errorMessage': 'Error: Could not fetch PHO list, server may be temporarily down.'})
+        }
     }.bind(this))
   }
 
@@ -195,6 +202,7 @@ class ScraperApp extends React.Component {
               <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
             </div>
           </div>
+          <Error active={this.state.errorActive} message={this.state.errorMessage}></Error>
         </div>
       </ThemeProvider>
     )
