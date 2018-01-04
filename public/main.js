@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "fcd9678f8af626f8fd7e"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "33896ae97a57f05b4639"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61041,8 +61041,8 @@ var Login = function (_React$Component) {
           _react2.default.createElement(
             'section',
             null,
-            _react2.default.createElement(_input2.default, { type: 'text', label: 'Username', name: 'username', value: this.state.username, onChange: this.handleChange.bind(this, 'username'), maxLength: 16 }),
-            _react2.default.createElement(_input2.default, { type: 'password', label: 'Password', name: 'password', value: this.state.password, onChange: this.handleChange.bind(this, 'password'), maxLength: 16 })
+            _react2.default.createElement(_input2.default, { type: 'text', label: 'Username', name: 'username', value: this.state.username, onChange: this.handleChange.bind(this, 'username'), maxLength: 32 }),
+            _react2.default.createElement(_input2.default, { type: 'password', label: 'Password', name: 'password', value: this.state.password, onChange: this.handleChange.bind(this, 'password'), maxLength: 128 })
           )
         )
       );
