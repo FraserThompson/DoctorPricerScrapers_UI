@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "dce049026895d8ba14a2"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "33896ae97a57f05b4639"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61654,7 +61654,7 @@ var ScraperApp = function (_React$Component) {
         return false;
       }
 
-      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/task_status/?task_id=" + this.state.selected.state.current_task_id + "&module=" + this.state.selected.props.module, null, "DELETE", function (res) {
+      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/task_status?task_id=" + this.state.selected.state.current_task_id + "&module=" + this.state.selected.props.module, null, "DELETE", function (res) {
         if (res.error) {
           console.log(res);
         } else {
@@ -61673,7 +61673,7 @@ var ScraperApp = function (_React$Component) {
         return false;
       }
 
-      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/scrape/", { "module": this.state.selected.props.module }, "POST", function (res) {
+      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/scrape", { "module": this.state.selected.props.module }, "POST", function (res) {
         if (res.error) {
           console.log(res.error);
           this.state.selected.setState({ "state": "Error: " + res.error });
@@ -61688,7 +61688,7 @@ var ScraperApp = function (_React$Component) {
     value: function handleSubmit() {
       var self = this;
 
-      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/submit/", { "module": this.state.selected.props.module }, "POST", function (res) {
+      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/submit", { "module": this.state.selected.props.module }, "POST", function (res) {
 
         if (res.error) {
           console.log(res.error);
@@ -61707,7 +61707,7 @@ var ScraperApp = function (_React$Component) {
 
       console.log('Checking the status of ' + selected.state.current_task_id + ' from ' + selected.props.module);
 
-      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/task_status/?task_id=" + selected.state.current_task_id, null, "GET", function (res) {
+      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/task_status?task_id=" + selected.state.current_task_id, null, "GET", function (res) {
 
         if (res.error) {
 
