@@ -67,8 +67,8 @@ class Login extends React.Component {
               title='Login'
           >
             <section>
-              <Input type='text' label='Username' name='username' value={this.state.username} onChange={this.handleChange.bind(this, 'username')} maxLength={16} />
-              <Input type='password' label='Password' name='password' value={this.state.password} onChange={this.handleChange.bind(this, 'password')} maxLength={16} />
+              <Input type='text' label='Username' name='username' value={this.state.username} onChange={this.handleChange.bind(this, 'username')} maxLength={32} />
+              <Input type='password' label='Password' name='password' value={this.state.password} onChange={this.handleChange.bind(this, 'password')} maxLength={128} />
             </section>
           </Dialog>
         </div>
