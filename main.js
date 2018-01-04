@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "33896ae97a57f05b4639"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "5c1a4fe0440477cc0f1e"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61658,7 +61658,7 @@ var ScraperApp = function (_React$Component) {
         if (res.error) {
           console.log(res);
         } else {
-          this.state.selected.setState({ "state": "Done", "time": null });
+          this.state.selected.setState({ "state": "Stopped", "time": null });
           this.getLogsList(this.state.selected.module);
           this.getPhoList();
         }
@@ -61728,6 +61728,9 @@ var ScraperApp = function (_React$Component) {
             this.getPhoList();
           } else if (json_res.status == "PENDING") {
             selected.setState({ "state": json_res.meta });
+          } else if (json_res.status == "REVOKED") {
+            clearInterval(selected.state.timer);
+            selected.setState({ "state": "Stopped" });
           } else {
             clearInterval(selected.state.timer);
             selected.setState({ "state": "Error: " + json_res.result });
