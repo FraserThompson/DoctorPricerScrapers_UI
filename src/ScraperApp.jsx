@@ -91,7 +91,7 @@ class ScraperApp extends React.Component {
         if (res.error) {
           console.log(res);
         }  else {
-          this.state.selected.setState({"state": "Done", "time": null});
+          this.state.selected.setState({"state": "Stopped", "time": null});
           this.getLogsList(this.state.selected.module);
           this.getPhoList();
         }
@@ -160,6 +160,9 @@ class ScraperApp extends React.Component {
               this.getPhoList();
             } else if (json_res.status == "PENDING") {
               selected.setState({"state": json_res.meta});
+            } else if (json_res.status == "REVOKED") {
+              clearInterval(selected.state.timer)
+              selected.setState({"state": "Stopped"})
             } else {
               clearInterval(selected.state.timer)
               selected.setState({"state": "Error: " + json_res.result})
