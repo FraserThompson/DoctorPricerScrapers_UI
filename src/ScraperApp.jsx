@@ -87,7 +87,7 @@ class ScraperApp extends React.Component {
       return false;
     }
     
-    Utils.JsonReq(config.apiUrl + "/dp/task_status/?task_id=" + this.state.selected.state.current_task_id + "&module=" + this.state.selected.props.module, null, "DELETE", function(res) {
+    Utils.JsonReq(config.apiUrl + "/dp/task_status?task_id=" + this.state.selected.state.current_task_id + "&module=" + this.state.selected.props.module, null, "DELETE", function(res) {
         if (res.error) {
           console.log(res);
         }  else {
@@ -106,7 +106,7 @@ class ScraperApp extends React.Component {
       return false;
     }
 
-    Utils.JsonReq(config.apiUrl + "/dp/scrape/", {"module": this.state.selected.props.module}, "POST", function(res) {
+    Utils.JsonReq(config.apiUrl + "/dp/scrape", {"module": this.state.selected.props.module}, "POST", function(res) {
         if (res.error) {
           console.log(res.error);
           this.state.selected.setState({"state": "Error: " + res.error})
@@ -121,7 +121,7 @@ class ScraperApp extends React.Component {
   handleSubmit() {
     var self = this;
 
-    Utils.JsonReq(config.apiUrl + "/dp/submit/", {"module": this.state.selected.props.module}, "POST", function(res) {
+    Utils.JsonReq(config.apiUrl + "/dp/submit", {"module": this.state.selected.props.module}, "POST", function(res) {
 
       if (res.error) {
         console.log(res.error);
@@ -138,7 +138,7 @@ class ScraperApp extends React.Component {
 
     console.log('Checking the status of ' + selected.state.current_task_id + ' from ' + selected.props.module);
 
-    Utils.JsonReq(config.apiUrl + "/dp/task_status/?task_id=" + selected.state.current_task_id, null, "GET", function(res) {
+    Utils.JsonReq(config.apiUrl + "/dp/task_status?task_id=" + selected.state.current_task_id, null, "GET", function(res) {
 
         if (res.error) {
 
