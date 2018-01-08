@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "5c1a4fe0440477cc0f1e"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "7019d6e2cde566a15671"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61084,6 +61084,8 @@ var _reactToolbox = __webpack_require__("./node_modules/react-toolbox/lib/index.
 
 var _button = __webpack_require__("./node_modules/react-toolbox/lib/button/index.js");
 
+var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61115,20 +61117,24 @@ var LogsList = function (_React$Component) {
     key: 'render',
     value: function render() {
 
-      var logsList = this.props.list.map(function (item, index) {
-        return _react2.default.createElement(_LogsListItem2.default, {
-          key: index,
-          date: item.date,
-          id: item.id,
-          scraped: JSON.stringify(item.scraped, null, 2),
-          scraped_count: item.scraped.length,
-          warnings: JSON.stringify(item.warnings, null, 2),
-          warnings_count: item.warnings.length,
-          errors: JSON.stringify(item.errors, null, 2),
-          errors_count: item.errors.length,
-          changes: JSON.stringify(item.changes, null, 2)
-        });
-      }, this);
+      if (this.props.list.length > 0) {
+        var logsList = this.props.list.map(function (item, index) {
+          return _react2.default.createElement(_LogsListItem2.default, {
+            key: index,
+            date: item.date,
+            id: item.id,
+            scraped: JSON.stringify(item.scraped, null, 2),
+            scraped_count: item.scraped.length,
+            warnings: JSON.stringify(item.warnings, null, 2),
+            warnings_count: item.warnings.length,
+            errors: JSON.stringify(item.errors, null, 2),
+            errors_count: item.errors.length,
+            changes: JSON.stringify(item.changes, null, 2)
+          });
+        }, this);
+      } else {
+        var logsList = _react2.default.createElement(_progress_bar.ProgressBar, { type: 'circular', mode: 'indeterminate', multicolor: true });
+      }
 
       return _react2.default.createElement(
         'div',
@@ -61335,6 +61341,8 @@ var _Utils2 = _interopRequireDefault(_Utils);
 
 var _list = __webpack_require__("./node_modules/react-toolbox/lib/list/index.js");
 
+var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61356,23 +61364,27 @@ var PHOList = function (_React$Component) {
     key: 'render',
     value: function render() {
 
-      var phoList = this.props.list.map(function (pho, index) {
-        return _react2.default.createElement(_PHOListItem2.default, {
-          key: index,
-          name: pho.name,
-          website: pho.website,
-          module: pho.module,
-          last_run: pho.last_run,
-          last_scrape: pho.last_scrape,
-          average_prices: pho.average_prices,
-          number_of_practices: pho.number_of_practices,
-          handleSelect: this.props.handleSelect.bind(this),
-          state: pho.state,
-          time: pho.time,
-          current_task_id: pho.current_task_id,
-          updateTask: this.props.updateTask.bind(this)
-        });
-      }, this);
+      if (this.props.list.length > 0) {
+        var phoList = this.props.list.map(function (pho, index) {
+          return _react2.default.createElement(_PHOListItem2.default, {
+            key: index,
+            name: pho.name,
+            website: pho.website,
+            module: pho.module,
+            last_run: pho.last_run,
+            last_scrape: pho.last_scrape,
+            average_prices: pho.average_prices,
+            number_of_practices: pho.number_of_practices,
+            handleSelect: this.props.handleSelect.bind(this),
+            state: pho.state,
+            time: pho.time,
+            current_task_id: pho.current_task_id,
+            updateTask: this.props.updateTask.bind(this)
+          });
+        }, this);
+      } else {
+        var phoList = _react2.default.createElement(_progress_bar.ProgressBar, { type: 'circular', mode: 'indeterminate', multicolor: true });
+      }
 
       return _react2.default.createElement(
         _list.List,
@@ -61469,7 +61481,7 @@ var PHOListItem = function (_React$Component) {
           _react2.default.createElement(
             'p',
             null,
-            'Last Run: ',
+            'Last Scrape: ',
             _Utils2.default.formatDate(this.props.last_run)
           ),
           _react2.default.createElement(

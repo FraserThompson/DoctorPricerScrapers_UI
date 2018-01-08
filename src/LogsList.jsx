@@ -5,6 +5,7 @@ import LogsListItem from './LogsListItem'
 import { Panel } from 'react-toolbox';
 import { Button } from 'react-toolbox/lib/button';
 import {Tab, Tabs} from 'react-toolbox';
+import { ProgressBar } from 'react-toolbox/lib/progress_bar';
 
 class LogsList extends React.Component {
 
@@ -21,22 +22,26 @@ class LogsList extends React.Component {
 
   render(){       
 
-    var logsList = this.props.list.map(function (item, index) {
-      return (
-        <LogsListItem
-          key={index}
-          date={item.date}
-          id={item.id}
-          scraped={JSON.stringify(item.scraped, null, 2)}
-          scraped_count={item.scraped.length}
-          warnings={JSON.stringify(item.warnings, null, 2)}
-          warnings_count={item.warnings.length}
-          errors={JSON.stringify(item.errors, null, 2)}
-          errors_count={item.errors.length}
-          changes={JSON.stringify(item.changes, null, 2)}
-        />
-      );
-    }, this);
+    if (this.props.list.length > 0) {
+      var logsList = this.props.list.map(function (item, index) {
+        return (
+          <LogsListItem
+            key={index}
+            date={item.date}
+            id={item.id}
+            scraped={JSON.stringify(item.scraped, null, 2)}
+            scraped_count={item.scraped.length}
+            warnings={JSON.stringify(item.warnings, null, 2)}
+            warnings_count={item.warnings.length}
+            errors={JSON.stringify(item.errors, null, 2)}
+            errors_count={item.errors.length}
+            changes={JSON.stringify(item.changes, null, 2)}
+          />
+        );
+      }, this);
+    } else {
+      var logsList = (<ProgressBar type='circular' mode='indeterminate' multicolor />)
+    }
     
     return (
       <div>

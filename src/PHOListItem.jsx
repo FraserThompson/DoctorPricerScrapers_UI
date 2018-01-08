@@ -31,7 +31,7 @@ class PHOListItem extends React.Component {
         itemContent={
           <div>
             <h3>{this.props.name}</h3>
-            <p>Last Run: {Utils.formatDate(this.props.last_run)}</p>
+            <p>Last Scrape: {Utils.formatDate(this.props.last_run)}</p>
             <p>Number of Practices: {this.props.number_of_practices}</p>
             <p>{this.state.state} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>
           </div>
