@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "f569462ff7a6ed17449b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "2bcafb875acd4fda6542"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61539,7 +61539,7 @@ var PHOListItem = function (_React$Component) {
             },
             _react2.default.createElement(
               'pre',
-              { style: { 'overflow': 'scroll', 'white-space': 'pre-wrap' } },
+              { style: { 'overflow': 'scroll', 'whiteSpace': 'pre-wrap' } },
               this.state.error && JSON.stringify(JSON.parse(this.state.error), null, 2)
             )
           )
@@ -61990,7 +61990,7 @@ exports.default = {
 /***/ 0:
 /***/ (function(module, exports) {
 
-module.exports = {"apiUrl":"https://localhost:8443"};
+module.exports = {"apiUrl":"https://api.doctorpricer.co.nz"};
 
 /***/ })
 
