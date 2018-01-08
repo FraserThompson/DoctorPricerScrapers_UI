@@ -109,7 +109,7 @@ class ScraperApp extends React.Component {
     Utils.JsonReq(config.apiUrl + "/dp/scrape", {"module": this.state.selected.props.module}, "POST", function(res) {
         if (res.error) {
           console.log(res.error);
-          this.state.selected.setState({"state": "Error: " + res.error})
+          this.state.selected.setState({"state": "Error", "error": res.error})
         }  else {
           var json_res = JSON.parse(res.data);
           this.state.selected.setState({"state": "Scraping", "current_task_id": json_res.task_id, "timer": setInterval(this.updateTask.bind(this, this.state.selected), 5000)});
@@ -125,7 +125,7 @@ class ScraperApp extends React.Component {
 
       if (res.error) {
         console.log(res.error);
-        this.state.selected.setState({"state": "Error: " + res.error})
+        this.state.selected.setState({"state": "Error", "error": res.error})
       }  else {
         var json_res = JSON.parse(res.data);
         this.state.selected.setState({'state': 'Submitting', 'current_task_id': json_res.task_id,  "timer": setInterval(function() { return this.updateTask(this.state.selected) }.bind(this), 5000)});
@@ -143,7 +143,7 @@ class ScraperApp extends React.Component {
         if (res.error) {
 
             clearInterval(selected.state.timer)
-            selected.setState({"state": "Error: " + res.data})
+            selected.setState({"state": "Error", "error": res.data})
             console.log(res);
 
         }  else {
@@ -165,7 +165,7 @@ class ScraperApp extends React.Component {
               selected.setState({"state": "Stopped"})
             } else {
               clearInterval(selected.state.timer)
-              selected.setState({"state": "Error: " + json_res.result})
+              selected.setState({"state": "Error", "error": json_res.result})
             }
 
         }

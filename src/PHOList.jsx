@@ -26,6 +26,7 @@ class PHOList extends React.Component {
             number_of_practices={pho.number_of_practices}
             handleSelect={this.props.handleSelect.bind(this)}
             state={pho.state}
+            error={pho.error}
             time={pho.time}
             current_task_id={pho.current_task_id}
             updateTask={this.props.updateTask.bind(this)}
