@@ -50,7 +50,7 @@ class LogsList extends React.Component {
             <h1>
               {this.props.selected.props.name}
             </h1>
-            <a href={this.props.selected.props.website}>{this.props.selected.props.website}</a>
+            <h4 style={{marginLeft: 15 + 'px'}}><a href={this.props.selected.props.website}>{this.props.selected.props.website}</a></h4>
             { this.props.sessionToken && 
               <div>
                 <Button type="submit" onClick={this.props.scrape} label="Scrape"/> 

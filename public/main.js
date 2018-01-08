@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "7019d6e2cde566a15671"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "fc442fa08a1bff975356"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61148,9 +61148,13 @@ var LogsList = function (_React$Component) {
             this.props.selected.props.name
           ),
           _react2.default.createElement(
-            'a',
-            { href: this.props.selected.props.website },
-            this.props.selected.props.website
+            'h4',
+            { style: { marginLeft: 15 + 'px' } },
+            _react2.default.createElement(
+              'a',
+              { href: this.props.selected.props.website },
+              this.props.selected.props.website
+            )
           ),
           this.props.sessionToken && _react2.default.createElement(
             'div',
