@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "fc442fa08a1bff975356"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "f569462ff7a6ed17449b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61381,6 +61381,7 @@ var PHOList = function (_React$Component) {
             number_of_practices: pho.number_of_practices,
             handleSelect: this.props.handleSelect.bind(this),
             state: pho.state,
+            error: pho.error,
             time: pho.time,
             current_task_id: pho.current_task_id,
             updateTask: this.props.updateTask.bind(this)
@@ -61434,7 +61435,15 @@ var _Utils = __webpack_require__("./src/Utils.jsx");
 
 var _Utils2 = _interopRequireDefault(_Utils);
 
+var _button = __webpack_require__("./node_modules/react-toolbox/lib/button/index.js");
+
+var _button2 = _interopRequireDefault(_button);
+
 var _list = __webpack_require__("./node_modules/react-toolbox/lib/list/index.js");
+
+var _dialog = __webpack_require__("./node_modules/react-toolbox/lib/dialog/index.js");
+
+var _dialog2 = _interopRequireDefault(_dialog);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61453,10 +61462,12 @@ var PHOListItem = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (PHOListItem.__proto__ || Object.getPrototypeOf(PHOListItem)).call(this, props));
 
     _this.state = {
+      dialogActive: false,
       state: _this.props.state,
       time: _this.props.time,
       current_task_id: _this.props.current_task_id,
-      timer: null
+      timer: null,
+      error: _this.props.error
 
       // if there's a current task running
     };if (_this.state.current_task_id) {
@@ -61471,6 +61482,11 @@ var PHOListItem = function (_React$Component) {
   }
 
   _createClass(PHOListItem, [{
+    key: 'handleDialogToggle',
+    value: function handleDialogToggle() {
+      this.setState({ dialogActive: !this.state.dialogActive });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(_list.ListItem, {
@@ -61499,6 +61515,8 @@ var PHOListItem = function (_React$Component) {
             null,
             this.state.state,
             ' ',
+            this.state.error && _react2.default.createElement(_button2.default, { label: 'Show', onClick: this.handleDialogToggle.bind(this) }),
+            ' ',
             this.state.time && _react2.default.createElement(
               'span',
               null,
@@ -61508,6 +61526,21 @@ var PHOListItem = function (_React$Component) {
                 { fromNow: true },
                 this.state.time
               )
+            )
+          ),
+          _react2.default.createElement(
+            _dialog2.default,
+            {
+              actions: [{ label: "Okay", onClick: this.handleDialogToggle.bind(this) }],
+              active: this.state.dialogActive,
+              onEscKeyDown: this.handleDialogToggle,
+              onOverlayClick: this.handleDialogToggle,
+              title: 'Full error'
+            },
+            _react2.default.createElement(
+              'pre',
+              { style: { 'overflow': 'scroll', 'white-space': 'pre-wrap' } },
+              this.state.error && JSON.stringify(JSON.parse(this.state.error), null, 2)
             )
           )
         ),
@@ -61692,7 +61725,7 @@ var ScraperApp = function (_React$Component) {
       _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/scrape", { "module": this.state.selected.props.module }, "POST", function (res) {
         if (res.error) {
           console.log(res.error);
-          this.state.selected.setState({ "state": "Error: " + res.error });
+          this.state.selected.setState({ "state": "Error", "error": res.error });
         } else {
           var json_res = JSON.parse(res.data);
           this.state.selected.setState({ "state": "Scraping", "current_task_id": json_res.task_id, "timer": setInterval(this.updateTask.bind(this, this.state.selected), 5000) });
@@ -61708,7 +61741,7 @@ var ScraperApp = function (_React$Component) {
 
         if (res.error) {
           console.log(res.error);
-          this.state.selected.setState({ "state": "Error: " + res.error });
+          this.state.selected.setState({ "state": "Error", "error": res.error });
         } else {
           var json_res = JSON.parse(res.data);
           this.state.selected.setState({ 'state': 'Submitting', 'current_task_id': json_res.task_id, "timer": setInterval(function () {
@@ -61728,7 +61761,7 @@ var ScraperApp = function (_React$Component) {
         if (res.error) {
 
           clearInterval(selected.state.timer);
-          selected.setState({ "state": "Error: " + res.data });
+          selected.setState({ "state": "Error", "error": res.data });
           console.log(res);
         } else {
 
@@ -61749,7 +61782,7 @@ var ScraperApp = function (_React$Component) {
             selected.setState({ "state": "Stopped" });
           } else {
             clearInterval(selected.state.timer);
-            selected.setState({ "state": "Error: " + json_res.result });
+            selected.setState({ "state": "Error", "error": json_res.result });
           }
         }
       }.bind(this));
@@ -61957,7 +61990,7 @@ exports.default = {
 /***/ 0:
 /***/ (function(module, exports) {
 
-module.exports = {"apiUrl":"https://api.doctorpricer.co.nz"};
+module.exports = {"apiUrl":"https://localhost:8443"};
 
 /***/ })
 
