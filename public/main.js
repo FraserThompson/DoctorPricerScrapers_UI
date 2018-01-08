@@ -61953,7 +61953,7 @@ exports.default = {
 /***/ 0:
 /***/ (function(module, exports) {
 
-module.exports = {"apiUrl":"https://api2.doctorpricer.co.nz"};
+module.exports = {"apiUrl":"https://api.doctorpricer.co.nz"};
 
 /***/ })
 
