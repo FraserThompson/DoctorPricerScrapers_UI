@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "2bcafb875acd4fda6542"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "46a832b3676e750dfb1f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61156,7 +61156,7 @@ var LogsList = function (_React$Component) {
               this.props.selected.props.website
             )
           ),
-          this.props.sessionToken && _react2.default.createElement(
+          this.props.sessionToken && this.props.selected.props.module && _react2.default.createElement(
             'div',
             null,
             _react2.default.createElement(_button.Button, { type: 'submit', onClick: this.props.scrape, label: 'Scrape' }),
