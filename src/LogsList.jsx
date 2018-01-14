@@ -6,24 +6,18 @@ import { Panel } from 'react-toolbox';
 import { Button } from 'react-toolbox/lib/button';
 import {Tab, Tabs} from 'react-toolbox';
 import { ProgressBar } from 'react-toolbox/lib/progress_bar';
-import Dialog from 'react-toolbox/lib/dialog';
 
 class LogsList extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      index: 1,
-      dialogActive: false,
+      index: 1
     }
   }
 
   handleTabChange(index) {
     this.setState({index});
-  }
-
-  handleDialogToggle() {
-    this.setState({dialogActive: !this.state.dialogActive});
   }
 
   render(){
@@ -60,18 +54,7 @@ class LogsList extends React.Component {
               <div style={{marginLeft: 15 + 'px'}}>
                 <Button style={{marginRight: 15 + 'px'}} type="submit" raised onClick={this.props.scrape} label="Scrape"/>
                 <Button style={{marginRight: 15 + 'px'}} type="submit" raised onClick={this.props.submit} label="Submit"/>
-                <Button style={{marginRight: 15 + 'px'}} type="submit" raised onClick={this.props.stop} label="Stop"/> 
-                <Button style={{backgroundColor: 'red'}} type="submit" raised accent onClick={this.handleDialogToggle.bind(this)} label="Delete"/> 
-                <Dialog
-                  actions={[{ label: "Cancel", onClick: this.handleDialogToggle.bind(this)}, {label: "Delete", onClick: this.props.delete.bind(this) }]}
-                  active={this.state.dialogActive}
-                  onEscKeyDown={this.handleDialogToggle}
-                  onOverlayClick={this.handleDialogToggle}
-                  type="small"
-                  title='Are you sure?'
-                >
-                <p>This will delete the PHO and all practices.</p>
-              </Dialog>
+                <Button style={{marginRight: 15 + 'px'}} type="submit" raised accent onClick={this.props.stop} label="Stop"/> 
               </div>
             }
             <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>

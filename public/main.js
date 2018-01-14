@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "7d69c5cbafc1c0800ea1"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "a54097db0ec4e4e11d96"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61086,10 +61086,6 @@ var _button = __webpack_require__("./node_modules/react-toolbox/lib/button/index
 
 var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
 
-var _dialog = __webpack_require__("./node_modules/react-toolbox/lib/dialog/index.js");
-
-var _dialog2 = _interopRequireDefault(_dialog);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61107,8 +61103,7 @@ var LogsList = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (LogsList.__proto__ || Object.getPrototypeOf(LogsList)).call(this, props));
 
     _this.state = {
-      index: 1,
-      dialogActive: false
+      index: 1
     };
     return _this;
   }
@@ -61117,11 +61112,6 @@ var LogsList = function (_React$Component) {
     key: 'handleTabChange',
     value: function handleTabChange(index) {
       this.setState({ index: index });
-    }
-  }, {
-    key: 'handleDialogToggle',
-    value: function handleDialogToggle() {
-      this.setState({ dialogActive: !this.state.dialogActive });
     }
   }, {
     key: 'render',
@@ -61170,24 +61160,7 @@ var LogsList = function (_React$Component) {
             { style: { marginLeft: 15 + 'px' } },
             _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.scrape, label: 'Scrape' }),
             _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.submit, label: 'Submit' }),
-            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.stop, label: 'Stop' }),
-            _react2.default.createElement(_button.Button, { style: { backgroundColor: 'red' }, type: 'submit', raised: true, accent: true, onClick: this.handleDialogToggle.bind(this), label: 'Delete' }),
-            _react2.default.createElement(
-              _dialog2.default,
-              {
-                actions: [{ label: "Cancel", onClick: this.handleDialogToggle.bind(this) }, { label: "Delete", onClick: this.props.delete.bind(this) }],
-                active: this.state.dialogActive,
-                onEscKeyDown: this.handleDialogToggle,
-                onOverlayClick: this.handleDialogToggle,
-                type: 'small',
-                title: 'Are you sure?'
-              },
-              _react2.default.createElement(
-                'p',
-                null,
-                'This will delete the PHO and all practices.'
-              )
-            )
+            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, accent: true, onClick: this.props.stop, label: 'Stop' })
           ),
           _react2.default.createElement(
             _reactToolbox.Tabs,
