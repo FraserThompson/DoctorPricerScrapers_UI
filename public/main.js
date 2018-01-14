@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "46a832b3676e750dfb1f"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "7d69c5cbafc1c0800ea1"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61086,6 +61086,10 @@ var _button = __webpack_require__("./node_modules/react-toolbox/lib/button/index
 
 var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
 
+var _dialog = __webpack_require__("./node_modules/react-toolbox/lib/dialog/index.js");
+
+var _dialog2 = _interopRequireDefault(_dialog);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61103,7 +61107,8 @@ var LogsList = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (LogsList.__proto__ || Object.getPrototypeOf(LogsList)).call(this, props));
 
     _this.state = {
-      index: 1
+      index: 1,
+      dialogActive: false
     };
     return _this;
   }
@@ -61114,10 +61119,14 @@ var LogsList = function (_React$Component) {
       this.setState({ index: index });
     }
   }, {
+    key: 'handleDialogToggle',
+    value: function handleDialogToggle() {
+      this.setState({ dialogActive: !this.state.dialogActive });
+    }
+  }, {
     key: 'render',
     value: function render() {
-
-      if (this.props.list.length > 0) {
+      if (this.props.list) {
         var logsList = this.props.list.map(function (item, index) {
           return _react2.default.createElement(_LogsListItem2.default, {
             key: index,
@@ -61158,10 +61167,27 @@ var LogsList = function (_React$Component) {
           ),
           this.props.sessionToken && this.props.selected.props.module && _react2.default.createElement(
             'div',
-            null,
-            _react2.default.createElement(_button.Button, { type: 'submit', onClick: this.props.scrape, label: 'Scrape' }),
-            _react2.default.createElement(_button.Button, { type: 'submit', onClick: this.props.stop, label: 'Stop' }),
-            _react2.default.createElement(_button.Button, { type: 'submit', onClick: this.props.submit, label: 'Submit' })
+            { style: { marginLeft: 15 + 'px' } },
+            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.scrape, label: 'Scrape' }),
+            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.submit, label: 'Submit' }),
+            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.stop, label: 'Stop' }),
+            _react2.default.createElement(_button.Button, { style: { backgroundColor: 'red' }, type: 'submit', raised: true, accent: true, onClick: this.handleDialogToggle.bind(this), label: 'Delete' }),
+            _react2.default.createElement(
+              _dialog2.default,
+              {
+                actions: [{ label: "Cancel", onClick: this.handleDialogToggle.bind(this) }, { label: "Delete", onClick: this.props.delete.bind(this) }],
+                active: this.state.dialogActive,
+                onEscKeyDown: this.handleDialogToggle,
+                onOverlayClick: this.handleDialogToggle,
+                type: 'small',
+                title: 'Are you sure?'
+              },
+              _react2.default.createElement(
+                'p',
+                null,
+                'This will delete the PHO and all practices.'
+              )
+            )
           ),
           _react2.default.createElement(
             _reactToolbox.Tabs,
@@ -61177,7 +61203,7 @@ var LogsList = function (_React$Component) {
             ),
             _react2.default.createElement(
               _reactToolbox.Tab,
-              { label: 'Logs' },
+              { label: 'Submit History' },
               logsList
             ),
             _react2.default.createElement(
@@ -61535,7 +61561,8 @@ var PHOListItem = function (_React$Component) {
               active: this.state.dialogActive,
               onEscKeyDown: this.handleDialogToggle,
               onOverlayClick: this.handleDialogToggle,
-              title: 'Full error'
+              title: 'Full error',
+              type: 'large'
             },
             _react2.default.createElement(
               'pre',
@@ -61735,7 +61762,6 @@ var ScraperApp = function (_React$Component) {
   }, {
     key: 'handleSubmit',
     value: function handleSubmit() {
-      var self = this;
 
       _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/submit", { "module": this.state.selected.props.module }, "POST", function (res) {
 
@@ -61747,6 +61773,21 @@ var ScraperApp = function (_React$Component) {
           this.state.selected.setState({ 'state': 'Submitting', 'current_task_id': json_res.task_id, "timer": setInterval(function () {
               return this.updateTask(this.state.selected);
             }.bind(this), 5000) });
+        }
+      }.bind(this), this.state.sessionToken);
+    }
+  }, {
+    key: 'handleDelete',
+    value: function handleDelete() {
+
+      _Utils2.default.JsonReq(_config2.default.apiUrl + "/dp/api/pho", { "name": this.state.selected.props.title }, "DELETE", function (res) {
+
+        if (res.error) {
+          console.log(res.error);
+          this.state.selected.setState({ "state": "Error", "error": res.error });
+        } else {
+          var json_res = JSON.parse(res.data);
+          this.getPhoList();
         }
       }.bind(this), this.state.sessionToken);
     }
@@ -61837,7 +61878,7 @@ var ScraperApp = function (_React$Component) {
             _react2.default.createElement(
               'div',
               { style: this.rightColumn },
-              _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this) })
+              _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, 'delete': this.handleDelete.bind(this), stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this) })
             )
           ),
           _react2.default.createElement(_Error2.default, { active: this.state.errorActive, message: this.state.errorMessage })

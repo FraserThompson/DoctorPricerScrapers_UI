@@ -49,6 +49,7 @@ class PHOListItem extends React.Component {
               onEscKeyDown={this.handleDialogToggle}
               onOverlayClick={this.handleDialogToggle}
               title='Full error'
+              type="large"
             >
             <pre style={{'overflow': 'scroll', 'whiteSpace': 'pre-wrap' }}>{this.state.error && JSON.stringify(JSON.parse(this.state.error), null, 2)}</pre>
           </Dialog>

@@ -119,7 +119,6 @@ class ScraperApp extends React.Component {
   }
 
   handleSubmit() {
-    var self = this;
 
     Utils.JsonReq(config.apiUrl + "/dp/submit", {"module": this.state.selected.props.module}, "POST", function(res) {
 
@@ -129,6 +128,21 @@ class ScraperApp extends React.Component {
       }  else {
         var json_res = JSON.parse(res.data);
         this.state.selected.setState({'state': 'Submitting', 'current_task_id': json_res.task_id,  "timer": setInterval(function() { return this.updateTask(this.state.selected) }.bind(this), 5000)});
+      }
+
+    }.bind(this), this.state.sessionToken)
+  }
+
+  handleDelete() {
+  
+    Utils.JsonReq(config.apiUrl + "/dp/api/pho", {"name": this.state.selected.props.title}, "DELETE", function(res) {
+
+      if (res.error) {
+        console.log(res.error);
+        this.state.selected.setState({"state": "Error", "error": res.error})
+      }  else {
+        var json_res = JSON.parse(res.data);
+        this.getPhoList();
       }
 
     }.bind(this), this.state.sessionToken)
@@ -202,7 +216,7 @@ class ScraperApp extends React.Component {
               <PHOList list={this.state.scrapers} handleSelect={this.handleSelect.bind(this)} updateTask={this.updateTask.bind(this)}/>
             </div>
             <div style={this.rightColumn}>
-              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} delete={this.handleDelete.bind(this)} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
             </div>
           </div>
           <Error active={this.state.errorActive} message={this.state.errorMessage}></Error>
