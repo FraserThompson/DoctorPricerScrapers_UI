@@ -39,7 +39,6 @@ class PHOList extends React.Component {
 
     return (
       <List selectable ripple>
-        <ListSubHeader caption='Scrapers' />
         {phoList}
       </List>
     )

@@ -7,6 +7,8 @@ import { Button } from 'react-toolbox/lib/button';
 import {Tab, Tabs} from 'react-toolbox';
 import { ProgressBar } from 'react-toolbox/lib/progress_bar';
 
+import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table';
+
 class LogsList extends React.Component {
 
   constructor(props) {
@@ -41,7 +43,12 @@ class LogsList extends React.Component {
     } else {
       var logsList = (<ProgressBar type='circular' mode='indeterminate' multicolor />)
     }
-    
+
+    const AverageModel = {
+      age: {type: Number},
+      average: {type: Number}
+    };
+
     return (
       <div>
         { this.props.selected != null && 
@@ -49,22 +56,45 @@ class LogsList extends React.Component {
             <h1>
               {this.props.selected.props.name}
             </h1>
-            <h4 style={{marginLeft: 15 + 'px'}}><a href={this.props.selected.props.website}>{this.props.selected.props.website}</a></h4>
-            { this.props.sessionToken && this.props.selected.props.module &&
-              <div style={{marginLeft: 15 + 'px'}}>
-                <Button style={{marginRight: 15 + 'px'}} type="submit" raised onClick={this.props.scrape} label="Scrape"/>
-                <Button style={{marginRight: 15 + 'px'}} type="submit" raised onClick={this.props.submit} label="Submit"/>
-                <Button style={{marginRight: 15 + 'px'}} type="submit" raised accent onClick={this.props.stop} label="Stop"/> 
-              </div>
-            }
+            <div>
+              { this.props.selected.website && <Button href={this.props.selected.props.website} label={this.props.selected.props.website} flat primary></Button> }
+              <Button href={"https://api.doctorpricer.co.nz/dp/api/practices/?pho=" + this.props.selected.props.name} target="_blank" label="View all practices" flat primary></Button> 
+              { this.props.sessionToken && this.props.selected.props.module &&
+                <div>
+                  <Button type="submit" flat onClick={this.props.scrape} label="Scrape"/>
+                  <Button type="submit" flat onClick={this.props.submit} label="Submit"/>
+                  <Button type="submit" flat accent onClick={this.props.stop} label="Stop"/> 
+                </div>
+              }
+            </div>
             <Tabs index={this.state.index} onChange={this.handleTabChange.bind(this)}>
               <Tab label="Last Scrape">
                 <pre>{JSON.stringify(this.props.selected.props.last_scrape, null, 2)}</pre>
               </Tab>
-              <Tab label="Submit History">
+              <Tab label="Scrape History">
                 {logsList}
               </Tab>
               <Tab label="Averages">
+                <h4>Average fees for PHO by age</h4>
+                <Table selectable={false} style={{ marginTop: 10 }}>
+                  <TableHead>
+                    <TableCell>Age</TableCell>
+                    <TableCell>0</TableCell>
+                    <TableCell>6</TableCell>
+                    <TableCell>13</TableCell>
+                    <TableCell>18</TableCell>
+                    <TableCell>25</TableCell>
+                    <TableCell>45</TableCell>
+                    <TableCell>65</TableCell>
+                  </TableHead>
+                  <TableRow>
+                    <TableCell>Price</TableCell>
+                    {this.props.selected.props.average_prices.map((item, idx) => (
+                      <TableCell key={idx}>${item.average.toFixed(2)}</TableCell>
+                    ))}
+                  </TableRow>
+                </Table>
+                <h4>Raw Data</h4>
                 <pre>{JSON.stringify(this.props.selected.props.average_prices, null, 2)}</pre>
               </Tab>
             </Tabs>

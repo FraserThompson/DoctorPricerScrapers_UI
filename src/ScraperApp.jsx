@@ -5,6 +5,7 @@ import Utils from './Utils';
 import LogsList from './LogsList';
 import Login from './Login';
 import Error from './Error';
+import Stats from './Stats';
 import Navigation from 'react-toolbox/lib/navigation';
 
 import AppBar from 'react-toolbox/lib/app_bar';
@@ -40,6 +41,16 @@ class ScraperApp extends React.Component {
     }
   }
 
+  getAverages() {
+    Utils.JsonReq(config.apiUrl + '/dp/averages', null, "GET", function(response) {
+        if (response.data) {
+          this.setState({ 'averages': JSON.parse(response.data) });
+        } else {
+          console.log("Couldn't get averages: " + response);
+        }
+    }.bind(this))
+  }
+
   getPhoList() {
 
     Utils.JsonReq(config.apiUrl + '/dp/api/pho/', null, "GET", function(response) {
@@ -59,6 +70,7 @@ class ScraperApp extends React.Component {
   }
 
   componentDidMount() {
+    this.getAverages();
     this.getPhoList();
   }
 
@@ -216,7 +228,10 @@ class ScraperApp extends React.Component {
               <PHOList list={this.state.scrapers} handleSelect={this.handleSelect.bind(this)} updateTask={this.updateTask.bind(this)}/>
             </div>
             <div style={this.rightColumn}>
-              <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} delete={this.handleDelete.bind(this)} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+              {this.state.selected &&
+                <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} delete={this.handleDelete.bind(this)} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+              }
+              {!this.state.selected && <Stats data={this.state.averages}/>}
             </div>
           </div>
           <Error active={this.state.errorActive} message={this.state.errorMessage}></Error>

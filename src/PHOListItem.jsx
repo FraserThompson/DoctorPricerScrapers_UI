@@ -37,24 +37,10 @@ class PHOListItem extends React.Component {
   render(){
     return (
       <ListItem 
-        itemContent={
-          <div>
-            <h3>{this.props.name}</h3>
-            <p>Last Scrape: {Utils.formatDate(this.props.last_run)}</p>
-            <p>Number of Practices: {this.props.number_of_practices}</p>
-            <p>{this.state.state} {this.state.error && <Button label='Show' onClick={this.handleDialogToggle.bind(this)} />} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>
-            <Dialog
-              actions={[{ label: "Okay", onClick: this.handleDialogToggle.bind(this) }]}
-              active={this.state.dialogActive}
-              onEscKeyDown={this.handleDialogToggle}
-              onOverlayClick={this.handleDialogToggle}
-              title='Full error'
-              type="large"
-            >
-            <pre style={{'overflow': 'scroll', 'whiteSpace': 'pre-wrap' }}>{this.state.error && JSON.stringify(JSON.parse(this.state.error), null, 2)}</pre>
-          </Dialog>
-          </div>
-        } 
+        caption={this.props.name}
+        legend={"Last Scrape: " + Utils.formatDate(this.props.last_run)}
+        leftIcon={String(this.props.number_of_practices)}
+        rightIcon={<p>{this.state.state} {this.state.error && <Button label='Show' onClick={this.handleDialogToggle.bind(this)} />} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>}
         onClick={this.props.handleSelect.bind(this, this)}/>
     )
   }
