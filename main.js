@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "a54097db0ec4e4e11d96"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "3a6106b3871d725a5272"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61086,6 +61086,8 @@ var _button = __webpack_require__("./node_modules/react-toolbox/lib/button/index
 
 var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
 
+var _table = __webpack_require__("./node_modules/react-toolbox/lib/table/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61135,6 +61137,11 @@ var LogsList = function (_React$Component) {
         var logsList = _react2.default.createElement(_progress_bar.ProgressBar, { type: 'circular', mode: 'indeterminate', multicolor: true });
       }
 
+      var AverageModel = {
+        age: { type: Number },
+        average: { type: Number }
+      };
+
       return _react2.default.createElement(
         'div',
         null,
@@ -61147,20 +61154,17 @@ var LogsList = function (_React$Component) {
             this.props.selected.props.name
           ),
           _react2.default.createElement(
-            'h4',
-            { style: { marginLeft: 15 + 'px' } },
-            _react2.default.createElement(
-              'a',
-              { href: this.props.selected.props.website },
-              this.props.selected.props.website
-            )
-          ),
-          this.props.sessionToken && this.props.selected.props.module && _react2.default.createElement(
             'div',
-            { style: { marginLeft: 15 + 'px' } },
-            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.scrape, label: 'Scrape' }),
-            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, onClick: this.props.submit, label: 'Submit' }),
-            _react2.default.createElement(_button.Button, { style: { marginRight: 15 + 'px' }, type: 'submit', raised: true, accent: true, onClick: this.props.stop, label: 'Stop' })
+            null,
+            this.props.selected.website && _react2.default.createElement(_button.Button, { href: this.props.selected.props.website, label: this.props.selected.props.website, flat: true, primary: true }),
+            _react2.default.createElement(_button.Button, { href: "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" + this.props.selected.props.name, target: '_blank', label: 'View all practices', flat: true, primary: true }),
+            this.props.sessionToken && this.props.selected.props.module && _react2.default.createElement(
+              'div',
+              null,
+              _react2.default.createElement(_button.Button, { type: 'submit', flat: true, onClick: this.props.scrape, label: 'Scrape' }),
+              _react2.default.createElement(_button.Button, { type: 'submit', flat: true, onClick: this.props.submit, label: 'Submit' }),
+              _react2.default.createElement(_button.Button, { type: 'submit', flat: true, accent: true, onClick: this.props.stop, label: 'Stop' })
+            )
           ),
           _react2.default.createElement(
             _reactToolbox.Tabs,
@@ -61176,12 +61180,87 @@ var LogsList = function (_React$Component) {
             ),
             _react2.default.createElement(
               _reactToolbox.Tab,
-              { label: 'Submit History' },
+              { label: 'Scrape History' },
               logsList
             ),
             _react2.default.createElement(
               _reactToolbox.Tab,
               { label: 'Averages' },
+              _react2.default.createElement(
+                'h4',
+                null,
+                'Average fees for PHO by age'
+              ),
+              _react2.default.createElement(
+                _table.Table,
+                { selectable: false, style: { marginTop: 10 } },
+                _react2.default.createElement(
+                  _table.TableHead,
+                  null,
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    'Age'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '0'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '6'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '13'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '18'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '25'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '45'
+                  ),
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    '65'
+                  )
+                ),
+                _react2.default.createElement(
+                  _table.TableRow,
+                  null,
+                  _react2.default.createElement(
+                    _table.TableCell,
+                    null,
+                    'Price'
+                  ),
+                  this.props.selected.props.average_prices.map(function (item, idx) {
+                    return _react2.default.createElement(
+                      _table.TableCell,
+                      { key: idx },
+                      '$',
+                      item.average.toFixed(2)
+                    );
+                  })
+                )
+              ),
+              _react2.default.createElement(
+                'h4',
+                null,
+                'Raw Data'
+              ),
               _react2.default.createElement(
                 'pre',
                 null,
@@ -61393,7 +61472,6 @@ var PHOList = function (_React$Component) {
       return _react2.default.createElement(
         _list.List,
         { selectable: true, ripple: true },
-        _react2.default.createElement(_list.ListSubHeader, { caption: 'Scrapers' }),
         phoList
       );
     }
@@ -61489,58 +61567,24 @@ var PHOListItem = function (_React$Component) {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(_list.ListItem, {
-        itemContent: _react2.default.createElement(
-          'div',
+        caption: this.props.name,
+        legend: "Last Scrape: " + _Utils2.default.formatDate(this.props.last_run),
+        leftIcon: String(this.props.number_of_practices),
+        rightIcon: _react2.default.createElement(
+          'p',
           null,
-          _react2.default.createElement(
-            'h3',
+          this.state.state,
+          ' ',
+          this.state.error && _react2.default.createElement(_button2.default, { label: 'Show', onClick: this.handleDialogToggle.bind(this) }),
+          ' ',
+          this.state.time && _react2.default.createElement(
+            'span',
             null,
-            this.props.name
-          ),
-          _react2.default.createElement(
-            'p',
-            null,
-            'Last Scrape: ',
-            _Utils2.default.formatDate(this.props.last_run)
-          ),
-          _react2.default.createElement(
-            'p',
-            null,
-            'Number of Practices: ',
-            this.props.number_of_practices
-          ),
-          _react2.default.createElement(
-            'p',
-            null,
-            this.state.state,
-            ' ',
-            this.state.error && _react2.default.createElement(_button2.default, { label: 'Show', onClick: this.handleDialogToggle.bind(this) }),
-            ' ',
-            this.state.time && _react2.default.createElement(
-              'span',
-              null,
-              'since ',
-              _react2.default.createElement(
-                _reactMoment2.default,
-                { fromNow: true },
-                this.state.time
-              )
-            )
-          ),
-          _react2.default.createElement(
-            _dialog2.default,
-            {
-              actions: [{ label: "Okay", onClick: this.handleDialogToggle.bind(this) }],
-              active: this.state.dialogActive,
-              onEscKeyDown: this.handleDialogToggle,
-              onOverlayClick: this.handleDialogToggle,
-              title: 'Full error',
-              type: 'large'
-            },
+            'since ',
             _react2.default.createElement(
-              'pre',
-              { style: { 'overflow': 'scroll', 'whiteSpace': 'pre-wrap' } },
-              this.state.error && JSON.stringify(JSON.parse(this.state.error), null, 2)
+              _reactMoment2.default,
+              { fromNow: true },
+              this.state.time
             )
           )
         ),
@@ -61594,6 +61638,10 @@ var _Login2 = _interopRequireDefault(_Login);
 var _Error = __webpack_require__("./src/Error.jsx");
 
 var _Error2 = _interopRequireDefault(_Error);
+
+var _Stats = __webpack_require__("./src/Stats.jsx");
+
+var _Stats2 = _interopRequireDefault(_Stats);
 
 var _navigation = __webpack_require__("./node_modules/react-toolbox/lib/navigation/index.js");
 
@@ -61650,6 +61698,17 @@ var ScraperApp = function (_React$Component) {
   }
 
   _createClass(ScraperApp, [{
+    key: 'getAverages',
+    value: function getAverages() {
+      _Utils2.default.JsonReq(_config2.default.apiUrl + '/dp/averages', null, "GET", function (response) {
+        if (response.data) {
+          this.setState({ 'averages': JSON.parse(response.data) });
+        } else {
+          console.log("Couldn't get averages: " + response);
+        }
+      }.bind(this));
+    }
+  }, {
     key: 'getPhoList',
     value: function getPhoList() {
 
@@ -61672,6 +61731,7 @@ var ScraperApp = function (_React$Component) {
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
+      this.getAverages();
       this.getPhoList();
     }
   }, {
@@ -61851,7 +61911,8 @@ var ScraperApp = function (_React$Component) {
             _react2.default.createElement(
               'div',
               { style: this.rightColumn },
-              _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, 'delete': this.handleDelete.bind(this), stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this) })
+              this.state.selected && _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, 'delete': this.handleDelete.bind(this), stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this) }),
+              !this.state.selected && _react2.default.createElement(_Stats2.default, { data: this.state.averages })
             )
           ),
           _react2.default.createElement(_Error2.default, { active: this.state.errorActive, message: this.state.errorMessage })
@@ -61864,6 +61925,135 @@ var ScraperApp = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = ScraperApp;
+
+/***/ }),
+
+/***/ "./src/Stats.jsx":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("./node_modules/react/react.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Utils = __webpack_require__("./src/Utils.jsx");
+
+var _Utils2 = _interopRequireDefault(_Utils);
+
+var _table = __webpack_require__("./node_modules/react-toolbox/lib/table/index.js");
+
+var _progress_bar = __webpack_require__("./node_modules/react-toolbox/lib/progress_bar/index.js");
+
+var _card = __webpack_require__("./node_modules/react-toolbox/lib/card/index.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Stats = function (_React$Component) {
+    _inherits(Stats, _React$Component);
+
+    function Stats(props) {
+        _classCallCheck(this, Stats);
+
+        return _possibleConstructorReturn(this, (Stats.__proto__ || Object.getPrototypeOf(Stats)).call(this, props));
+    }
+
+    _createClass(Stats, [{
+        key: 'render',
+        value: function render() {
+            if (this.props.data && this.props.data.length > 0) {
+                return _react2.default.createElement(
+                    _card.Card,
+                    null,
+                    _react2.default.createElement(_card.CardTitle, { title: 'Average fees by age', subtitle: 'NZ Wide' }),
+                    _react2.default.createElement(
+                        _card.CardText,
+                        null,
+                        _react2.default.createElement(
+                            _table.Table,
+                            { selectable: false, style: { marginTop: 10 } },
+                            _react2.default.createElement(
+                                _table.TableHead,
+                                null,
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    'Age'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '0'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '6'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '13'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '18'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '45'
+                                ),
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    '65'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                _table.TableRow,
+                                null,
+                                _react2.default.createElement(
+                                    _table.TableCell,
+                                    null,
+                                    'Price'
+                                ),
+                                this.props.data.map(function (item, idx) {
+                                    return _react2.default.createElement(
+                                        _table.TableCell,
+                                        { key: idx },
+                                        '$',
+                                        item.price__avg.toFixed(2)
+                                    );
+                                })
+                            )
+                        )
+                    )
+                );
+            } else {
+                return _react2.default.createElement(_progress_bar.ProgressBar, { type: 'circular', mode: 'indeterminate', multicolor: true });
+            }
+        }
+    }]);
+
+    return Stats;
+}(_react2.default.Component);
+
+exports.default = Stats;
 
 /***/ }),
 
