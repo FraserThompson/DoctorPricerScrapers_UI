@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "3a6106b3871d725a5272"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "76d16b5f323da5f290bb"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61886,7 +61886,7 @@ var ScraperApp = function (_React$Component) {
           null,
           _react2.default.createElement(
             _app_bar2.default,
-            { title: 'DoctorPricer Scrapers' },
+            { title: 'DoctorPricer Stats' },
             this.state.username && _react2.default.createElement(
               'h4',
               null,
