@@ -215,7 +215,7 @@ class ScraperApp extends React.Component {
     return (
       <ThemeProvider theme={theme}>
         <div>
-          <AppBar title='DoctorPricer Scrapers'>
+          <AppBar title='DoctorPricer Stats'>
             { this.state.username && 
               <h4> Logged in as {this.state.username} </h4>
             }
