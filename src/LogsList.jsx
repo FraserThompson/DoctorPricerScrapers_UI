@@ -3,7 +3,7 @@ import Utils from './Utils';
 import LogsListItem from './LogsListItem'
 
 import { Panel } from 'react-toolbox';
-import { Button } from 'react-toolbox/lib/button';
+import {Button, IconButton} from 'react-toolbox/lib/button';
 import {Tab, Tabs} from 'react-toolbox';
 import { ProgressBar } from 'react-toolbox/lib/progress_bar';
 
@@ -55,6 +55,11 @@ class LogsList extends React.Component {
           <div className="header">
             <h1>
               {this.props.selected.props.name}
+              
+              <span style={{float:"right"}}>
+                <IconButton icon='X' onClick={this.props.close} />
+              </span>
+
             </h1>
             <div>
               { this.props.selected.website && <Button href={this.props.selected.props.website} label={this.props.selected.props.website} flat primary></Button> }
@@ -71,7 +76,7 @@ class LogsList extends React.Component {
               <Tab label="Last Scrape">
                 <pre>{JSON.stringify(this.props.selected.props.last_scrape, null, 2)}</pre>
               </Tab>
-              <Tab label="Scrape History">
+              <Tab label="Submission History">
                 {logsList}
               </Tab>
               <Tab label="Averages">
@@ -89,7 +94,7 @@ class LogsList extends React.Component {
                   </TableHead>
                   <TableRow>
                     <TableCell>Price</TableCell>
-                    {this.props.selected.props.average_prices.map((item, idx) => (
+                    {this.props.selected.props.average_prices.length && this.props.selected.props.average_prices.map((item, idx) => (
                       <TableCell key={idx}>${item.average.toFixed(2)}</TableCell>
                     ))}
                   </TableRow>

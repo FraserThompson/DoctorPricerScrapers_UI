@@ -36,12 +36,23 @@ class PHOListItem extends React.Component {
 
   render(){
     return (
-      <ListItem 
-        caption={this.props.name}
-        legend={"Last Scrape: " + Utils.formatDate(this.props.last_run)}
-        leftIcon={String(this.props.number_of_practices)}
-        rightIcon={<p>{this.state.state} {this.state.error && <Button label='Show' onClick={this.handleDialogToggle.bind(this)} />} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>}
-        onClick={this.props.handleSelect.bind(this, this)}/>
+      <div>
+        <ListItem 
+          caption={this.props.name}
+          legend={"Last Scrape: " + Utils.formatDate(this.props.last_run)}
+          leftIcon={String(this.props.number_of_practices)}
+          rightIcon={<p>{this.state.state} {this.state.error && <Button label='Show' onClick={this.handleDialogToggle.bind(this)} />} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>}
+          onClick={this.props.handleSelect.bind(this, this)}/>
+        <Dialog
+          actions={this.actions}
+          active={this.state.dialogActive}
+          onEscKeyDown={this.handleDialogToggle.bind(this)}
+          onOverlayClick={this.handleDialogToggle.bind(this)}
+          title={this.props.name + ' Error'}
+        >
+          <pre style={{'whiteSpace': 'pre-wrap'}}><code>{this.state.error}</code></pre>
+        </Dialog>
+      </div>
     )
   }
 }

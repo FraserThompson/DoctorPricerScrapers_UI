@@ -44,9 +44,18 @@ class ScraperApp extends React.Component {
   getAverages() {
     Utils.JsonReq(config.apiUrl + '/dp/averages', null, "GET", function(response) {
         if (response.data) {
-          this.setState({ 'averages': JSON.parse(response.data) });
+          var json_response = JSON.parse(response.data);
+
+          if (json_response[0].price__avg == null) {
+            console.log("No averages: " + json_response);
+          } else {
+            this.setState({ 'averages': json_response });
+          }
+
         } else {
+
           console.log("Couldn't get averages: " + response);
+
         }
     }.bind(this))
   }
@@ -145,6 +154,10 @@ class ScraperApp extends React.Component {
     }.bind(this), this.state.sessionToken)
   }
 
+  handleClose() {
+    this.setState({ 'selected': null });
+  }
+
   handleDelete() {
   
     Utils.JsonReq(config.apiUrl + "/dp/api/pho", {"name": this.state.selected.props.title}, "DELETE", function(res) {
@@ -229,9 +242,9 @@ class ScraperApp extends React.Component {
             </div>
             <div style={this.rightColumn}>
               {this.state.selected &&
-                <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} delete={this.handleDelete.bind(this)} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)}/>
+                <LogsList selected={this.state.selected} sessionToken={this.state.sessionToken} list={this.state.logs} delete={this.handleDelete.bind(this)} stop ={this.handleStop.bind(this)} scrape={this.handleScrape.bind(this)} submit={this.handleSubmit.bind(this)} close={this.handleClose.bind(this)}/>
               }
-              {!this.state.selected && <Stats data={this.state.averages}/>}
+              {!this.state.selected && this.state.averages && <Stats data={this.state.averages}/>}
             </div>
           </div>
           <Error active={this.state.errorActive} message={this.state.errorMessage}></Error>
