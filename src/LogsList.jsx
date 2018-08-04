@@ -58,7 +58,7 @@ class LogsList extends React.Component {
             </h1>
             <div>
               { this.props.selected.website && <Button href={this.props.selected.props.website} label={this.props.selected.props.website} flat primary></Button> }
-              <Button href={"https://api2.doctorpricer.co.nz/dp/api/practices/?pho=" + this.props.selected.props.name} target="_blank" label="View all practices" flat primary></Button> 
+              <Button href={"https://api.doctorpricer.co.nz/dp/api/practices/?pho=" + this.props.selected.props.name} target="_blank" label="View all practices" flat primary></Button> 
               { this.props.sessionToken && this.props.selected.props.module &&
                 <div>
                   <Button type="submit" flat onClick={this.props.scrape} label="Scrape"/>
