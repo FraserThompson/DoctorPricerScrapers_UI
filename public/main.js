@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "76d16b5f323da5f290bb"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "858cffa148efa3255f06"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61151,7 +61151,12 @@ var LogsList = function (_React$Component) {
           _react2.default.createElement(
             'h1',
             null,
-            this.props.selected.props.name
+            this.props.selected.props.name,
+            _react2.default.createElement(
+              'span',
+              { style: { float: "right" } },
+              _react2.default.createElement(_button.IconButton, { icon: 'X', onClick: this.props.close })
+            )
           ),
           _react2.default.createElement(
             'div',
@@ -61180,7 +61185,7 @@ var LogsList = function (_React$Component) {
             ),
             _react2.default.createElement(
               _reactToolbox.Tab,
-              { label: 'Scrape History' },
+              { label: 'Submission History' },
               logsList
             ),
             _react2.default.createElement(
@@ -61246,7 +61251,7 @@ var LogsList = function (_React$Component) {
                     null,
                     'Price'
                   ),
-                  this.props.selected.props.average_prices.map(function (item, idx) {
+                  this.props.selected.props.average_prices.length && this.props.selected.props.average_prices.map(function (item, idx) {
                     return _react2.default.createElement(
                       _table.TableCell,
                       { key: idx },
@@ -61566,29 +61571,52 @@ var PHOListItem = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement(_list.ListItem, {
-        caption: this.props.name,
-        legend: "Last Scrape: " + _Utils2.default.formatDate(this.props.last_run),
-        leftIcon: String(this.props.number_of_practices),
-        rightIcon: _react2.default.createElement(
-          'p',
-          null,
-          this.state.state,
-          ' ',
-          this.state.error && _react2.default.createElement(_button2.default, { label: 'Show', onClick: this.handleDialogToggle.bind(this) }),
-          ' ',
-          this.state.time && _react2.default.createElement(
-            'span',
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_list.ListItem, {
+          caption: this.props.name,
+          legend: "Last Scrape: " + _Utils2.default.formatDate(this.props.last_run),
+          leftIcon: String(this.props.number_of_practices),
+          rightIcon: _react2.default.createElement(
+            'p',
             null,
-            'since ',
+            this.state.state,
+            ' ',
+            this.state.error && _react2.default.createElement(_button2.default, { label: 'Show', onClick: this.handleDialogToggle.bind(this) }),
+            ' ',
+            this.state.time && _react2.default.createElement(
+              'span',
+              null,
+              'since ',
+              _react2.default.createElement(
+                _reactMoment2.default,
+                { fromNow: true },
+                this.state.time
+              )
+            )
+          ),
+          onClick: this.props.handleSelect.bind(this, this) }),
+        _react2.default.createElement(
+          _dialog2.default,
+          {
+            actions: this.actions,
+            active: this.state.dialogActive,
+            onEscKeyDown: this.handleDialogToggle.bind(this),
+            onOverlayClick: this.handleDialogToggle.bind(this),
+            title: this.props.name + ' Error'
+          },
+          _react2.default.createElement(
+            'pre',
+            { style: { 'whiteSpace': 'pre-wrap' } },
             _react2.default.createElement(
-              _reactMoment2.default,
-              { fromNow: true },
-              this.state.time
+              'code',
+              null,
+              this.state.error
             )
           )
-        ),
-        onClick: this.props.handleSelect.bind(this, this) });
+        )
+      );
     }
   }]);
 
@@ -61702,8 +61730,15 @@ var ScraperApp = function (_React$Component) {
     value: function getAverages() {
       _Utils2.default.JsonReq(_config2.default.apiUrl + '/dp/averages', null, "GET", function (response) {
         if (response.data) {
-          this.setState({ 'averages': JSON.parse(response.data) });
+          var json_response = JSON.parse(response.data);
+
+          if (json_response[0].price__avg == null) {
+            console.log("No averages: " + json_response);
+          } else {
+            this.setState({ 'averages': json_response });
+          }
         } else {
+
           console.log("Couldn't get averages: " + response);
         }
       }.bind(this));
@@ -61810,6 +61845,11 @@ var ScraperApp = function (_React$Component) {
       }.bind(this), this.state.sessionToken);
     }
   }, {
+    key: 'handleClose',
+    value: function handleClose() {
+      this.setState({ 'selected': null });
+    }
+  }, {
     key: 'handleDelete',
     value: function handleDelete() {
 
@@ -61911,8 +61951,8 @@ var ScraperApp = function (_React$Component) {
             _react2.default.createElement(
               'div',
               { style: this.rightColumn },
-              this.state.selected && _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, 'delete': this.handleDelete.bind(this), stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this) }),
-              !this.state.selected && _react2.default.createElement(_Stats2.default, { data: this.state.averages })
+              this.state.selected && _react2.default.createElement(_LogsList2.default, { selected: this.state.selected, sessionToken: this.state.sessionToken, list: this.state.logs, 'delete': this.handleDelete.bind(this), stop: this.handleStop.bind(this), scrape: this.handleScrape.bind(this), submit: this.handleSubmit.bind(this), close: this.handleClose.bind(this) }),
+              !this.state.selected && this.state.averages && _react2.default.createElement(_Stats2.default, { data: this.state.averages })
             )
           ),
           _react2.default.createElement(_Error2.default, { active: this.state.errorActive, message: this.state.errorMessage })
