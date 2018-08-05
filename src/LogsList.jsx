@@ -95,7 +95,7 @@ class LogsList extends React.Component {
                   <TableRow>
                     <TableCell>Price</TableCell>
                     {this.props.selected.props.average_prices.length && this.props.selected.props.average_prices.map((item, idx) => (
-                      <TableCell key={idx}>${item.average.toFixed(2)}</TableCell>
+                      <TableCell key={idx}>${item.average && item.average.toFixed(2)}</TableCell>
                     ))}
                   </TableRow>
                 </Table>
