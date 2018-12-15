@@ -4,11 +4,11 @@ Bootstrapped via create-react-app.
 
 ## Dev
 
-`npm run serve`
+`yarn run serve`
 
 ## Deploy
 
-`npm run build`
+`yarn run build`
 
 Commit and push to master then run:
 

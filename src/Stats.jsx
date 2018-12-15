@@ -21,7 +21,7 @@ class Stats extends React.Component {
                     <TableCell>Age</TableCell>
                     <TableCell>0</TableCell>
                     <TableCell>6</TableCell>
-                    <TableCell>13</TableCell>
+                    <TableCell>14</TableCell>
                     <TableCell>18</TableCell>
                     <TableCell>45</TableCell>
                     <TableCell>65</TableCell>
