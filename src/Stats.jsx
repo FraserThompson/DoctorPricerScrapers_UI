@@ -29,7 +29,7 @@ class Stats extends React.Component {
                     <TableRow>
                     <TableCell>Price</TableCell>
                     {this.props.data.map((item, idx) => (
-                        <TableCell key={idx}>${item.price__avg.toFixed(2)}</TableCell>
+                        <TableCell key={idx}>${item.price__avg && parseFloat(item.price__avg).toFixed(2)}</TableCell>
                     ))}
                     </TableRow>
                 </Table>

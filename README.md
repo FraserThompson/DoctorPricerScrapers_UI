@@ -12,4 +12,4 @@ Bootstrapped via create-react-app.
 
 Commit and push to master then run:
 
-`git subtree push --prefix public origin gh-pages`
+`yarn run deploy`
