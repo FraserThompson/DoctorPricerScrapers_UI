@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "359c36b96cf96c75cee2"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d5ee1c167b7fe2d2ba6e"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -61890,7 +61890,7 @@ var LogsList = function (_React$Component) {
                       _table.TableCell,
                       { key: idx },
                       '$',
-                      item.average && item.average.toFixed(2)
+                      item.average && parseFloat(item.average).toFixed(2)
                     );
                   })
                 )
@@ -62711,7 +62711,7 @@ var Stats = function (_React$Component) {
                                         _table.TableCell,
                                         { key: idx },
                                         '$',
-                                        item.price__avg.toFixed(2)
+                                        item.price__avg && parseFloat(item.price__avg).toFixed(2)
                                     );
                                 })
                             )
