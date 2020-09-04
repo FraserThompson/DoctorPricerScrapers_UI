@@ -5,7 +5,7 @@
   "dependencies": {
     "chart.js": "^1.1.1",
     "moment": "^2.19.2",
-    "node-sass": "^4.7.1",
+    "node-sass": "^4.13.1",
     "react": "^15.5.4",
     "react-chartjs": "^1.2.0",
     "react-css-themr": "^2.1.2",
