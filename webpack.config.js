@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index', // entry point of our app. assets/js/index.js should require other js modules and dependencies it needs
 
   output: {
-      path: path.resolve('./public'),
+      path: path.resolve('./dist'),
       filename: "[name].js",
   },
 
@@ -29,8 +29,7 @@ module.exports = {
               sourceMap: true,
               importLoaders: 1
             }
-          },
-          "postcss-loader"
+          }
         ]
       },
       {
