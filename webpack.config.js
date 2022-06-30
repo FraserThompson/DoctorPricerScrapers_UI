@@ -1,51 +1,101 @@
-var path = require("path")
-var webpack = require('webpack')
-var BundleTracker = require('webpack-bundle-tracker')
+var path = require("path");
+var webpack = require("webpack");
 
-module.exports = {
-  context: __dirname,
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+var BundleTracker = require("webpack-bundle-tracker");
 
-  entry: './src/index', // entry point of our app. assets/js/index.js should require other js modules and dependencies it needs
+module.exports = (env, argv) => {
+  return {
+    context: __dirname,
 
-  output: {
-      path: path.resolve('./dist'),
-      filename: "[name].js",
-  },
+    entry: {
+      app: "./app/src/index.jsx",
+    },
 
-  plugins: [
-    new BundleTracker({filename: './webpack-stats.json'}),
-  ],
+    output: {
+      path: path.join(__dirname, "dist"),
+      filename: "[name].[chunkhash].bundle.js",
+    },
 
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1
-            }
+    plugins: [
+      new CleanWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        template: "html-loader!./app/index.html",
+      }),
+      new BundleTracker({ filename: "./webpack-stats.json" }),
+    ],
+
+    optimization:
+      argv.mode === "production"
+        ? {
+            splitChunks: {
+              chunks: "all",
+            },
+            minimize: true,
+            minimizer: [
+              new TerserPlugin({
+                test: /\.js(\?.*)?$/i,
+              }),
+            ],
           }
-        ]
-      },
-      {
-        test: /.js?$/,
-        use: 'babel-loader'
-      },
-      { 
-        test: /\.jsx?$/, 
-        exclude: /node_modules/, 
-        use: 'babel-loader'
-      }]
-  },
-  resolve: {
-    extensions: ['.js', '.jsx', '.css']
-  },
-  externals: {
-    config: JSON.stringify(require('./app_config.json')), //eslint-disable-line
-  }
-}
+        : {},
+
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            "style-loader",
+            {
+              loader: "css-loader",
+              options: {
+                modules: true,
+                sourceMap: true,
+                importLoaders: 1,
+              },
+            },
+          ],
+        },
+        {
+          test: /.js?$/,
+          use: "babel-loader",
+        },
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: "babel-loader",
+        },
+        {
+          test: [/\.jpg$/, /\.png$/, /\.gif$/],
+          type: "asset/resource",
+        },
+        {
+          test: /\.(txt|ico)$/,
+          type: "asset/resource",
+          generator: {
+            filename: "[name][ext]",
+          },
+        },
+        {
+          test: /CNAME$/,
+          type: "asset/resource",
+          generator: {
+            filename: "[name]",
+          },
+        },
+      ],
+    },
+    resolve: {
+      extensions: [".js", ".jsx", ".css"],
+      modules: [
+        "node_modules", // The default
+        "src",
+      ],
+    },
+    externals: {
+      config: JSON.stringify(require("./app_config.json")), //eslint-disable-line
+    },
+  };
+};

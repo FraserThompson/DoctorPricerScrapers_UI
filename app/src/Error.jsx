@@ -1,5 +1,4 @@
 import React from 'react';
-import config from 'config';
 import Snackbar from '@mui/material/Snackbar';
 import { Alert } from '@mui/material';
 
