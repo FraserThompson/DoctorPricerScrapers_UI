@@ -14,12 +14,6 @@ module.exports = {
 
   plugins: [
     new BundleTracker({filename: './webpack-stats.json'}),
-    new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery"
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
   ],
 
   module: {
@@ -33,8 +27,7 @@ module.exports = {
             options: {
               modules: true,
               sourceMap: true,
-              importLoaders: 1,
-              localIdentName: "[name]--[local]--[hash:base64:8]"
+              importLoaders: 1
             }
           },
           "postcss-loader"
@@ -42,13 +35,12 @@ module.exports = {
       },
       {
         test: /.js?$/,
-        loader: 'babel-loader'
+        use: 'babel-loader'
       },
       { 
         test: /\.jsx?$/, 
         exclude: /node_modules/, 
-        loader: 'babel-loader',
-        query: { presets:['es2015', 'react'] }
+        use: 'babel-loader'
       }]
   },
   resolve: {

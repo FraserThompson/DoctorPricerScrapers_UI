@@ -4,12 +4,16 @@ Bootstrapped via create-react-app.
 
 ## Dev
 
-`yarn run serve`
+Change the `apiUrl` in `app_config.json` to point to your local `dp_server` instance then run:
+
+`npm run serve`
+
+Now it'll be running on http://localhost:8080
 
 ## Deploy
 
-`yarn run build`
+`npm run build`
 
 Commit and push to master then run:
 
-`yarn run deploy`
+`npm run deploy`

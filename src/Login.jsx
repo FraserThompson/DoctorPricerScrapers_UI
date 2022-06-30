@@ -1,8 +1,9 @@
 import React from 'react';
-import Dialog from 'react-toolbox/lib/dialog';
-import Link from 'react-toolbox/lib/link';
-import Input from 'react-toolbox/lib/input';
+import Dialog from '@mui/material/Dialog';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
 import Utils from './Utils';
+import { Typography } from '@mui/material';
 
 class Login extends React.Component {
 
@@ -61,14 +62,13 @@ class Login extends React.Component {
           }
           <Dialog
               actions={this.actions}
-              active={this.state.active}
-              onEscKeyDown={this.handleToggle}
-              onOverlayClick={this.handleToggle}
-              title='Login'
+              open={this.state.active}
+              onClose={this.handleToggle}
           >
             <section>
-              <Input type='text' label='Username' name='username' value={this.state.username} onChange={this.handleChange.bind(this, 'username')} maxLength={32} />
-              <Input type='password' label='Password' name='password' value={this.state.password} onChange={this.handleChange.bind(this, 'password')} maxLength={128} />
+              <Typography variant="h4">Login</Typography>
+              <TextField type='text' label='Username' name='username' value={this.state.username} onChange={this.handleChange.bind(this, 'username')} maxLength={32} />
+              <TextField type='password' label='Password' name='password' value={this.state.password} onChange={this.handleChange.bind(this, 'password')} maxLength={128} />
             </section>
           </Dialog>
         </div>

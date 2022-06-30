@@ -1,14 +1,19 @@
-import React from 'react';
-import config from 'config';
-import Moment from 'react-moment';
-import Utils from './Utils';
+import React from "react";
+import Moment from "react-moment";
+import Utils from "./Utils";
 
-import Button from 'react-toolbox/lib/button';
-import { ListItem } from 'react-toolbox/lib/list';
-import Dialog from 'react-toolbox/lib/dialog';
+import Button from "@mui/material/Button";
+
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Typography } from "@mui/material";
 
 class PHOListItem extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -18,42 +23,75 @@ class PHOListItem extends React.Component {
       time: this.props.time,
       current_task_id: this.props.current_task_id,
       timer: null,
-      error: this.props.error
-    }
+      error: this.props.error,
+    };
 
     // if there's a current task running
-    if (this.state.current_task_id){
+    if (this.state.current_task_id) {
       this.state.state = "Scraping";
       this.props.updateTask(this);
-      this.state.timer = setInterval(function() { return this.props.updateTask(this) }.bind(this), 5000);
+      this.state.timer = setInterval(
+        function () {
+          return this.props.updateTask(this);
+        }.bind(this),
+        5000
+      );
     }
-  
   }
 
   handleDialogToggle() {
-    this.setState({dialogActive: !this.state.dialogActive});
+    this.setState({ dialogActive: !this.state.dialogActive });
   }
 
-  render(){
+  render() {
     return (
-      <div>
-        <ListItem 
-          caption={this.props.name}
-          legend={"Last Scrape: " + Utils.formatDate(this.props.last_run)}
-          leftIcon={String(this.props.number_of_practices)}
-          rightIcon={<p>{this.state.state} {this.state.error && <Button label='Show' onClick={this.handleDialogToggle.bind(this)} />} {this.state.time && <span>since <Moment fromNow>{this.state.time}</Moment></span>}</p>}
-          onClick={this.props.handleSelect.bind(this, this)}/>
+      <>
+        <ListItemButton onClick={this.props.handleSelect.bind(this, this)}>
+          <ListItemIcon>
+            <Typography variant="h5">
+              {String(this.props.number_of_practices)}
+            </Typography>
+          </ListItemIcon>
+          <ListItemText
+            primary={this.props.name}
+            secondary={
+              <>
+                <Typography>
+                  {this.state.state}{" "}
+                  {this.state.error && (
+                    <Button
+                      onClick={this.handleDialogToggle.bind(this)}
+                      color="error"
+                    >
+                      Show
+                    </Button>
+                  )}
+                </Typography>
+                <Typography>
+                  {this.state.time && (
+                    <span>
+                      since <Moment fromNow>{this.state.time}</Moment>
+                    </span>
+                  )}
+                  Last Scrape: {Utils.formatDate(this.props.last_run)}
+                </Typography>
+              </>
+            }
+          ></ListItemText>
+        </ListItemButton>
         <Dialog
           actions={this.actions}
-          active={this.state.dialogActive}
+          open={this.state.dialogActive}
           onEscKeyDown={this.handleDialogToggle.bind(this)}
           onOverlayClick={this.handleDialogToggle.bind(this)}
-          title={this.props.name + ' Error'}
         >
-          <pre style={{'whiteSpace': 'pre-wrap'}}><code>{this.state.error}</code></pre>
+          <DialogTitle>{this.props.name + " Error"}</DialogTitle>
+          <pre style={{ whiteSpace: "pre-wrap" }}>
+            <code>{this.state.error}</code>
+          </pre>
         </Dialog>
-      </div>
-    )
+      </>
+    );
   }
 }
 

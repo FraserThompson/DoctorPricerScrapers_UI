@@ -1,6 +1,7 @@
 import React from 'react';
 import config from 'config';
-import { Snackbar } from 'react-toolbox/lib/snackbar';
+import Snackbar from '@mui/material/Snackbar';
+import { Alert } from '@mui/material';
 
 class ErrorBar extends React.Component {
 
@@ -10,15 +11,11 @@ class ErrorBar extends React.Component {
 
     render() {
         return (
-            <div>
-                <Snackbar
-                action=''
-                active={this.props.active}
-                label={this.props.message}
-                ref='snackbar'
-                type='warning'
-                />
-            </div>
+            <Snackbar action='' open={this.props.active}>
+                    <Alert severity="warning" sx={{ width: '100%' }}>
+                        {this.props.message}
+                    </Alert>
+            </Snackbar>
         );
     }
 }
