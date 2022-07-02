@@ -1,145 +1,264 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import LogsListItem from "./LogsListItem";
+import moment from "moment";
 
 import Button from "@mui/material/Button";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, ButtonGroup, Card, CardHeader, Typography } from "@mui/material";
 
 import IconButton from "@mui/material/IconButton";
 import TabPanel from "./TabPanel";
+import Averages from "./Averages";
+import PriceHistory from "./PriceHistory";
+import {
+  getLogsList,
+  getPHOPriceHistory,
+  getSessionToken,
+  startScraping,
+  stopScraping,
+  submitData,
+} from "./API";
+import { AppContext } from "./ScraperApp";
 
-export default function LogsList(props) {
-  const [tab, setTab] = React.useState(0);
+export default function LogsList({ handleClose }) {
+  const [tab, setTab] = useState(0);
+  const [list, setList] = useState([]);
+  const [priceHistory, setPricehistory] = React.useState(null);
+
+  const sessionToken = getSessionToken();
+
+  const appContext = useContext(AppContext);
+
+  const fetchData = async () => {
+    const logs = await getLogsList(appContext.selected.module);
+    const priceHistory = await getPHOPriceHistory(appContext.selected.name);
+    setPricehistory(processPriceHistoryData(priceHistory));
+    setList(logs);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [appContext.selected]);
+
+  useEffect(() => {
+    const state = appContext.getTaskState(appContext.selected.module);
+
+    // If we have state and we haven't already started checking
+    if (state && state.state == "Done") {
+      fetchData();
+    }
+  }, [appContext.taskStates]);
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
   };
 
-  if (props.list) {
-    var logsList = props.list.map(function (item, index) {
-      return (
-        <LogsListItem
-          key={index}
-          date={item.date}
-          id={item.id}
-          scraped={JSON.stringify(item.scraped, null, 2)}
-          scraped_count={item.scraped.length}
-          warnings={JSON.stringify(item.warnings, null, 2)}
-          warnings_count={item.warnings.length}
-          errors={JSON.stringify(item.errors, null, 2)}
-          errors_count={item.errors.length}
-          changes={JSON.stringify(item.changes, null, 2)}
-        />
-      );
-    }, this);
-  } else {
-    var logsList = <CircularProgress />;
+  async function handleScrape() {
+    const state = appContext.getTaskState(appContext.selected.module);
+
+    if (state) {
+      console.log("Not scraping because we're already scraping");
+      return false;
+    }
+
+    const response = await startScraping(appContext.selected.module);
+
+    if (!response.error) {
+      console.log("Scraping: " + appContext.selected.module);
+      const newState = {
+        error: null,
+        id: response.data.task_id,
+        state: "Scraping",
+      };
+      appContext.setTaskState(appContext.selected.module, newState);
+    } else {
+      console.log(response);
+      const newState = {
+        error: JSON.stringify(response.error),
+        id: null,
+        state: "Error",
+      };
+      appContext.setTaskState(appContext.selected.module, newState);
+    }
   }
 
-  const AverageModel = {
-    age: { type: Number },
-    average: { type: Number },
+  async function handleSubmit() {
+    const response = await submitData(appContext.selected.module);
+
+    if (!response.error) {
+      const newState = {
+        error: null,
+        id: response.data.task_id,
+        state: "Submitting",
+      };
+      appContext.setTaskState(appContext.selected.module, newState);
+    } else {
+      const newState = { error: JSON.stringify(response.error), id: null, state: "Error" };
+      appContext.setTaskState(appContext.selected.module, newState);
+    }
+  }
+
+  async function handleStop() {
+    const state = appContext.getTaskState(appContext.selected.module);
+
+    const task_id = state ? state.id : appContext.selected.current_task_id;
+
+    if (!task_id) {
+      console.log("Can't stop because we're not doing anything");
+      return false;
+    }
+
+    const data = await stopScraping(task_id);
+
+    const newState = { error: null, id: null, state: "Stopped" };
+    appContext.setTaskState(appContext.selected.module, newState);
+  }
+
+  const processPriceHistoryData = (data) => {
+    const labels = [];
+    const averages = [[], [], [], [], []];
+    
+    data.forEach(({ fields }) => {
+      if (Object.keys(fields.average_prices).length !== 0) {
+        const date = moment(fields.history_date);
+
+        if (!labels.includes(date)) {
+          labels.push(date);
+
+          averages[0].push(fields.average_prices[2].average);
+          averages[1].push(fields.average_prices[3].average);
+          averages[2].push(fields.average_prices[4].average);
+          averages[3].push(fields.average_prices[5].average);
+          averages[4].push(fields.average_prices[6].average);
+        }
+      }
+    });
+
+    return { labels, averages };
   };
+
+  const state = appContext.getTaskState(appContext.selected.module);
 
   return (
     <>
-      {props.selected != null && (
-        <Box>
-          <Box sx={{ p: 1 }}>
-            <Typography variant="h4">
-              {props.selected.props.name}
-
-              <span style={{ float: "right" }}>
-                <IconButton onClick={props.close}>X</IconButton>
-              </span>
-            </Typography>
-            <Box>
-              {props.selected.website && (
+      {appContext.selected != null && (
+        <Card variant="outlined">
+          <CardHeader
+            action={
+              <>
                 <Button
-                  href={props.selected.props.website}
-                  label={props.selected.props.website}
-                ></Button>
+                  href={
+                    "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" +
+                    appContext.selected.name
+                  }
+                  target="_blank"
+                  color="success"
+                >
+                  View all practices
+                </Button>
+
+                <IconButton onClick={handleClose}>X</IconButton>
+              </>
+            }
+            title={appContext.selected.name}
+          />
+          <Box sx={{ p: 1 }}>
+            <Box>
+              {appContext.selected.website && (
+                <Button href={appContext.selected.website}>Website</Button>
               )}
-              <Button
-                href={
-                  "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" +
-                  props.selected.props.name
-                }
-                target="_blank"
-                label="View all practices"
-              ></Button>
-              {props.sessionToken && props.selected.props.module && (
-                <div>
-                  <Button type="submit" onClick={props.scrape}>
-                    Scrape
+            </Box>
+            <Box>
+              {sessionToken && appContext.selected.module && (
+                <ButtonGroup
+                  variant="contained"
+                  aria-label="outlined primary button group"
+                >
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={handleScrape}
+                    disabled={state && state.state == "Scraping"}
+                  >
+                    {state && state.state == "Scraping" ? "Scraping" : "Scrape"}
                   </Button>
-                  <Button type="submit" onClick={props.submit}>
-                    Submit
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={handleSubmit}
+                    disabled={state && state.state == "Submitting"}
+                  >
+                    {state && state.state == "Submitting"
+                      ? "Submitting"
+                      : "Submit"}
                   </Button>
-                  <Button type="submit" color="error" onClick={props.stop}>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    color="error"
+                    onClick={handleStop}
+                  >
                     Stop
                   </Button>
-                </div>
+                </ButtonGroup>
               )}
             </Box>
           </Box>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs value={tab} onChange={handleTabChange}>
+              <Tab label="Averages" />
               <Tab label="Last Scrape" />
               <Tab label="Submission History" />
-              <Tab label="Averages" />
             </Tabs>
           </Box>
-          <TabPanel value={tab} index={0}>
-            <pre>
-              {JSON.stringify(props.selected.props.last_scrape, null, 2)}
-            </pre>
-          </TabPanel>
-          <TabPanel value={tab} index={2}>
-            {logsList}
-          </TabPanel>
-          <TabPanel value={tab} index={3}>
+          <TabPanel
+            value={tab}
+            index={0}
+            style={{ overflow: "auto", height: "73vh" }}
+          >
             <Typography variant="h5">Average fees for PHO by age</Typography>
-            <TableContainer component={Paper}>
-              <Table style={{ marginTop: 10 }}>
-                <TableHead>
-                  <TableCell>Age</TableCell>
-                  <TableCell>0</TableCell>
-                  <TableCell>6</TableCell>
-                  <TableCell>13</TableCell>
-                  <TableCell>18</TableCell>
-                  <TableCell>25</TableCell>
-                  <TableCell>45</TableCell>
-                  <TableCell>65</TableCell>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>Price</TableCell>
-                    {props.selected.props.average_prices.length &&
-                      props.selected.props.average_prices.map((item, idx) => (
-                        <TableCell key={idx}>
-                          ${item.average && parseFloat(item.average).toFixed(2)}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Typography variant="h6">Raw Data</Typography>
+            <Averages data={appContext.selected.average_prices} />
+            {priceHistory && <PriceHistory data={priceHistory} />}
+          </TabPanel>
+          <TabPanel
+            value={tab}
+            index={1}
+            style={{ overflow: "auto", height: "73vh" }}
+          >
             <pre>
-              {JSON.stringify(props.selected.props.average_prices, null, 2)}
+              {JSON.stringify(appContext.selected.last_scrape, null, 2)}
             </pre>
           </TabPanel>
-        </Box>
+          <TabPanel
+            value={tab}
+            index={2}
+            style={{ overflow: "auto", height: "73vh" }}
+          >
+            {list ? (
+              list.map((item, index) => {
+                return (
+                  <LogsListItem
+                    key={index}
+                    date={item.date}
+                    id={item.id}
+                    scraped={JSON.stringify(item.scraped, null, 2)}
+                    scraped_count={item.scraped.length}
+                    warnings={JSON.stringify(item.warnings, null, 2)}
+                    warnings_count={item.warnings.length}
+                    errors={JSON.stringify(item.errors, null, 2)}
+                    errors_count={item.errors.length}
+                    changes={JSON.stringify(item.changes, null, 2)}
+                  />
+                );
+              })
+            ) : (
+              <CircularProgress />
+            )}
+          </TabPanel>
+        </Card>
       )}
     </>
   );

@@ -1,10 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ScraperApp from './ScraperApp';
 
 require('../CNAME')
 
-ReactDOM.render(
-    <ScraperApp/>,
-    document.getElementById('react-app')
-);
+const container = document.getElementById('react-app')
+const root = ReactDOM.createRoot(container);
+root.render(<ScraperApp/>);

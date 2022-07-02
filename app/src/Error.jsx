@@ -1,22 +1,13 @@
-import React from 'react';
-import Snackbar from '@mui/material/Snackbar';
-import { Alert } from '@mui/material';
+import React from "react";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
 
-class ErrorBar extends React.Component {
-
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        return (
-            <Snackbar action='' open={this.props.active}>
-                    <Alert severity="warning" sx={{ width: '100%' }}>
-                        {this.props.message}
-                    </Alert>
-            </Snackbar>
-        );
-    }
+export default function ErrorBar(props) {
+  return (
+    <Snackbar action="" open={props.active}>
+      <Alert severity="warning" sx={{ width: "100%" }} onClose={(props) => props.close()}>
+        {props.message}
+      </Alert>
+    </Snackbar>
+  );
 }
-
-export default ErrorBar;
