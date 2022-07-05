@@ -4,11 +4,31 @@ export function getSessionToken() {
   return sessionStorage.getItem("dpSessionToken")
 }
 
+export async function login(username, password) {
+  const response = await fetch(config.apiUrl + "/dp/login/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  })
+
+  if (!response.ok) {
+    console.error("Couldn't login: " + await response.text());
+    return null;
+  }
+
+  const data = await response.json();
+
+  return data;
+  
+}
+
 export async function getAverages() {
   const response = await fetch(config.apiUrl + "/dp/averages");
 
   if (!response.ok) {
-    console.error("Couldn't get averages: " + error);
+    console.error("Couldn't get averages: " + await response.text());
     return null;
   }
 
@@ -25,7 +45,7 @@ export async function getPHOPriceHistory(name) {
   const response = await fetch(config.apiUrl + "/dp/history/pho?name=" + name);
 
   if (!response.ok) {
-    console.error("Couldn't get averages: " + error);
+    console.error("Couldn't get averages: " + await response.text());
     return null;
   }
 
@@ -37,7 +57,7 @@ export async function getPriceHistory() {
   const response = await fetch(config.apiUrl + "/dp/history");
 
   if (!response.ok) {
-    console.error("Couldn't get averages: " + error);
+    console.error("Couldn't get averages: " + await response.text());
     return null;
   }
 
@@ -50,7 +70,7 @@ export async function getPHOAverages(name) {
   const data = await response.json();
 
   if (!response.ok) {
-    console.error("Couldn't get averages: " + error);
+    console.error("Couldn't get averages: " + await response.text());
     return null;
   }
 
@@ -77,7 +97,7 @@ export async function getLogsList(name) {
   const response = await fetch(config.apiUrl + "/dp/api/logs/?source=" + name);
 
   if (!response.ok) {
-    console.error(response);
+    console.error(await response.text());
     return null;
   }
 
@@ -97,7 +117,7 @@ export async function stopScraping(task_id, module) {
   );
 
   if (!response.ok) {
-    console.error(response);
+    console.error(await response.text());
     return null;
   }
 
@@ -116,8 +136,9 @@ export async function startScraping(module) {
   });
 
   if (!response.ok) {
-    console.error(response);
-    return { data: null, error: response };
+    const errorText = await response.text()
+    console.error(errorText);
+    return { data: null, error: errorText };
   }
 
   const data = await response.json();
@@ -136,8 +157,9 @@ export async function submitData(module) {
   });
 
   if (!response.ok) {
-    console.error(response);
-    return { data: null, error: response };
+    const errorText = await response.text()
+    console.error(errorText);
+    return { data: null, error: errorText };
   }
 
   const data = await response.json();
@@ -151,8 +173,9 @@ export async function checkTask(task_id) {
   );
 
   if (!response.ok) {
-    console.error(response);
-    return { data: null, error: response };
+    const errorText = await response.text()
+    console.error(errorText);
+    return { data: null, error: await errorText };
   }
 
   const data = await response.json();

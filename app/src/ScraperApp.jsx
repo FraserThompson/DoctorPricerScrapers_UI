@@ -7,7 +7,7 @@ import { Grid, Paper, ThemeProvider } from "@mui/material";
 import "./css/theme.css";
 
 import { createTheme } from "@mui/material/styles";
-import {  getPhoList } from "./API";
+import { getPhoList } from "./API";
 import Home from "./Home";
 import SiteHeader from "./SiteHeader";
 
@@ -28,18 +28,51 @@ const theme = createTheme({
   },
 });
 
-const initialState = {error: null, id: null, state: null};
-const initialContext = { selected: null, taskStates: {} };
+const initialState = { error: null, id: null, state: null };
+const initialContext = {
+  selected: null,
+  taskStates: {},
+  sessionToken: null,
+  username: null,
+  setTaskState: () => {},
+  getTaskState: () => {},
+  setGlobalError: () => {},
+  setSessionToken: () => {},
+  setUsername: () => {},
+};
 export const AppContext = React.createContext(initialContext);
 
 export default function ScraperApp() {
   const [phoList, setPhoList] = useState([]);
-  const [error, setError] = useState(false);
+  const [error, setGlobalError] = useState(false);
   const [selected, setSelected] = useState(null);
   const [taskStates, setTaskStates] = useState({});
+  const [sessionToken, setSessionToken] = useState(
+    sessionStorage.getItem("dpSessionToken")
+  );
+  const [username, setUsername] = useState(
+    sessionStorage.getItem("dpUsername")
+  );
+
+  // Get the list on app start
+  useEffect(() => {
+    const fetchData = async () => {
+      const phoList = await getPhoList();
+      const states = phoList.reduce((acc, pho) => {
+        acc[pho.module] = {
+          id: pho.current_task_id
+        }
+        return acc;
+      }, {})
+      console.log(states)
+      setTaskStates(states);
+      setPhoList(phoList);
+    };
+    fetchData();
+  }, []);
 
   function setTaskState(moduleName, state) {
-    const newTaskStates = {...taskStates};
+    const newTaskStates = { ...taskStates };
     newTaskStates[moduleName] = state;
     setTaskStates(newTaskStates);
   }
@@ -48,26 +81,22 @@ export default function ScraperApp() {
     return taskStates[moduleName];
   }
 
-  // Get the list on app start
-  useEffect(() => {
-    const fetchData = async () => {
-      const phoList = await getPhoList();
-      setPhoList(phoList);
-    };
-    fetchData();
-  }, []);
-
   return (
     <ThemeProvider theme={theme}>
-      <SiteHeader />
       <AppContext.Provider
         value={{
-          selected: selected,
-          taskStates: taskStates,
-          setTaskState: setTaskState,
-          getTaskState: getTaskState,
+          selected,
+          taskStates,
+          sessionToken,
+          username,
+          setTaskState,
+          getTaskState,
+          setGlobalError,
+          setSessionToken,
+          setUsername,
         }}
       >
+        <SiteHeader />
         <Grid container>
           <Grid item xs={4}>
             <Paper

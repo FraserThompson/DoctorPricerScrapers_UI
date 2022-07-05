@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, Paper, Typography } from "@mui/material";
+import { Paper } from "@mui/material";
 
 export default function Averages(props) {
   if (props.data && props.data.length > 0) {
@@ -18,6 +18,7 @@ export default function Averages(props) {
               <TableCell>Age</TableCell>
               <TableCell>0</TableCell>
               <TableCell>6</TableCell>
+              <TableCell>13</TableCell>
               <TableCell>14</TableCell>
               <TableCell>18</TableCell>
               <TableCell>25</TableCell>

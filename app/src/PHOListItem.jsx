@@ -17,7 +17,6 @@ import { checkTask } from "./API";
 export default function PHOListItem({ pho, handleSelect }) {
   const [dialogActive, setDialogActive] = useState(false);
   const [time, setTime] = useState(null);
-  const [timer, setTimer] = useState(null);
 
   const appContext = useContext(AppContext);
 
@@ -27,17 +26,8 @@ export default function PHOListItem({ pho, handleSelect }) {
     // If we have state and we haven't already started checking
     if (state && state.id) {
       updateTask(pho);
-      if (!timer) {
-        const theTimer = setInterval(() => updateTask(), 3000);
-        setTimer(theTimer);
-      }
     }
 
-    if (state && (state.state == "Done" || state.state == "Stopped")) {
-      stopTimer();
-    }
-
-    return () => clearInterval(timer);
   }, [appContext.taskStates]);
 
   function handleDialogToggle() {
@@ -58,18 +48,15 @@ export default function PHOListItem({ pho, handleSelect }) {
       setTime(response.data.date_done);
 
       if (response.data.status == "SUCCESS") {
-        stopTimer();
         const newState = { id: null, state: "Done" };
         appContext.setTaskState(pho.module, newState);
       } else if (response.data.status == "PENDING") {
         const newState = { ...state, state: response.data.meta };
         appContext.setTaskState(pho.module, newState);
       } else if (response.data.status == "REVOKED") {
-        stopTimer();
         const newState = { id: null, state: "Stopped" };
         appContext.setTaskState(pho.module, newState);
       } else {
-        stopTimer();
         const newState = {
           id: null,
           state: "Error",
@@ -78,15 +65,9 @@ export default function PHOListItem({ pho, handleSelect }) {
         appContext.setTaskState(pho.module, newState);
       }
     } else {
-      stopTimer();
       const newState = { id: null, state: "Error", error: response.error };
       appContext.setTaskState(pho.module, newState);
     }
-  }
-
-  function stopTimer() {
-    clearInterval(timer);
-    setTime(null);
   }
 
   const theState = appContext.getTaskState(pho.module);

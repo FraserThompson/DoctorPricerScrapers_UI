@@ -1,49 +1,50 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
-import Utils from "./Utils";
 import {
   Button,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { login } from "./API";
+import { AppContext } from "./ScraperApp";
 
-export default function Login(props) {
+export default function Login() {
   const [active, setActive] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    fetch(props.apiUrl + "/dp/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: username, password: password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        props.loginCallback(data.token, username);
-        setActive(!active);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const appContext = useContext(AppContext);
+
+  const handleLogin = async () => {
+    const data = await login(username, password)
+    
+    sessionStorage.setItem("dpSessionToken", data.token);
+    sessionStorage.setItem("dpUsername", username);
+
+    appContext.setUsername(username)
+    appContext.setSessionToken(data.token);
+
+    setActive(!active);
   };
 
   const handleLogout = () => {
-    props.logoutCallback();
+    sessionStorage.removeItem("dpSessionToken");
+    sessionStorage.removeItem("dpUsername");
+
+    appContext.setUsername(null)
+    appContext.setSessionToken(null);
   };
 
   return (
     <>
-      {!props.sessionToken && (
+      {!appContext.sessionToken && (
         <Button href="#" onClick={() => setActive(true)}>
           Login
         </Button>
       )}
-      {props.sessionToken && (
+      {appContext.sessionToken && (
         <Button href="#" onClick={handleLogout}>
           Logout
         </Button>

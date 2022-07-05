@@ -35,7 +35,7 @@ export default function LogsList({ handleClose }) {
   const fetchData = async () => {
     const logs = await getLogsList(appContext.selected.module);
     const priceHistory = await getPHOPriceHistory(appContext.selected.name);
-    setPricehistory(processPriceHistoryData(priceHistory));
+    setPricehistory(priceHistory);
     setList(logs);
   };
 
@@ -59,8 +59,8 @@ export default function LogsList({ handleClose }) {
   async function handleScrape() {
     const state = appContext.getTaskState(appContext.selected.module);
 
-    if (state) {
-      console.log("Not scraping because we're already scraping");
+    if (state && state.id) {
+      appContext.setGlobalError("Can't scrape, already scraping")
       return false;
     }
 
@@ -120,6 +120,7 @@ export default function LogsList({ handleClose }) {
   const processPriceHistoryData = (data) => {
     const labels = [];
     const averages = [[], [], [], [], []];
+    const ages = [13, 14, 18, 25, 45, 65]
     
     data.forEach(({ fields }) => {
       if (Object.keys(fields.average_prices).length !== 0) {
