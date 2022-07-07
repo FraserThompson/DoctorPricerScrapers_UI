@@ -25,7 +25,6 @@ ChartJS.register(
 
 export default function PriceHistory({ data }) {
   const [processedData, setProcessedData] = useState(null);
-
   useEffect(() => {
     setProcessedData(processData(data));
   }, [data]);

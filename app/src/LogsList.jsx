@@ -75,7 +75,7 @@ export default function LogsList({ handleClose }) {
       };
       appContext.setTaskState(appContext.selected.module, newState);
     } else {
-      console.log(response);
+      console.error(response);
       const newState = {
         error: JSON.stringify(response.error),
         id: null,
@@ -116,30 +116,6 @@ export default function LogsList({ handleClose }) {
     const newState = { error: null, id: null, state: "Stopped" };
     appContext.setTaskState(appContext.selected.module, newState);
   }
-
-  const processPriceHistoryData = (data) => {
-    const labels = [];
-    const averages = [[], [], [], [], []];
-    const ages = [13, 14, 18, 25, 45, 65]
-    
-    data.forEach(({ fields }) => {
-      if (Object.keys(fields.average_prices).length !== 0) {
-        const date = moment(fields.history_date);
-
-        if (!labels.includes(date)) {
-          labels.push(date);
-
-          averages[0].push(fields.average_prices[2].average);
-          averages[1].push(fields.average_prices[3].average);
-          averages[2].push(fields.average_prices[4].average);
-          averages[3].push(fields.average_prices[5].average);
-          averages[4].push(fields.average_prices[6].average);
-        }
-      }
-    });
-
-    return { labels, averages };
-  };
 
   const state = appContext.getTaskState(appContext.selected.module);
 
@@ -245,13 +221,10 @@ export default function LogsList({ handleClose }) {
                     key={index}
                     date={item.date}
                     id={item.id}
-                    scraped={JSON.stringify(item.scraped, null, 2)}
-                    scraped_count={item.scraped.length}
-                    warnings={JSON.stringify(item.warnings, null, 2)}
-                    warnings_count={item.warnings.length}
-                    errors={JSON.stringify(item.errors, null, 2)}
-                    errors_count={item.errors.length}
-                    changes={JSON.stringify(item.changes, null, 2)}
+                    scraped={item.scraped}
+                    warnings={item.warnings}
+                    errors={item.errors}
+                    changes={item.changes}
                   />
                 );
               })

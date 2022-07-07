@@ -8,8 +8,8 @@ import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
 
-export default function Averages(props) {
-  if (props.data && props.data.length > 0) {
+export default function Averages({ data }) {
+  if (data && data.length > 0) {
     return (
       <TableContainer component={Paper}>
         <Table style={{ marginTop: 10 }}>
@@ -18,7 +18,6 @@ export default function Averages(props) {
               <TableCell>Age</TableCell>
               <TableCell>0</TableCell>
               <TableCell>6</TableCell>
-              <TableCell>13</TableCell>
               <TableCell>14</TableCell>
               <TableCell>18</TableCell>
               <TableCell>25</TableCell>
@@ -29,7 +28,7 @@ export default function Averages(props) {
           <TableBody>
             <TableRow>
               <TableCell>Price</TableCell>
-              {props.data.map((item, idx) => (
+              {data.map((item, idx) => (
                 <TableCell key={idx}>
                   $
                   {(item.price__avg || item.average) &&

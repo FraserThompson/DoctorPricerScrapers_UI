@@ -25,7 +25,7 @@ export async function login(username, password) {
 }
 
 export async function getAverages() {
-  const response = await fetch(config.apiUrl + "/dp/averages");
+  const response = await fetch(config.apiUrl + "/dp/averages/");
 
   if (!response.ok) {
     console.error("Couldn't get averages: " + await response.text());
@@ -42,7 +42,7 @@ export async function getAverages() {
 }
 
 export async function getPHOPriceHistory(name) {
-  const response = await fetch(config.apiUrl + "/dp/history/pho?name=" + name);
+  const response = await fetch(config.apiUrl + "/dp/history/pho/?name=" + name);
 
   if (!response.ok) {
     console.error("Couldn't get averages: " + await response.text());
@@ -66,7 +66,7 @@ export async function getPriceHistory() {
 }
 
 export async function getPHOAverages(name) {
-  const response = await fetch(config.apiUrl + "/dp/averages/pho?name=" + name);
+  const response = await fetch(config.apiUrl + "/dp/averages/pho/?name=" + name);
   const data = await response.json();
 
   if (!response.ok) {
@@ -169,7 +169,7 @@ export async function submitData(module) {
 
 export async function checkTask(task_id) {
   const response = await fetch(
-    config.apiUrl + "/dp/task_status?task_id=" + task_id
+    config.apiUrl + "/dp/task_status/?task_id=" + task_id
   );
 
   if (!response.ok) {

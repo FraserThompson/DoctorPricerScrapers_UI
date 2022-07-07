@@ -64,7 +64,6 @@ export default function ScraperApp() {
         }
         return acc;
       }, {})
-      console.log(states)
       setTaskStates(states);
       setPhoList(phoList);
     };
