@@ -34,7 +34,7 @@ export default function LogsList({ handleClose }) {
 
   const fetchData = async () => {
     const logs = await getLogsList(appContext.selected.module);
-    const priceHistory = await getPHOPriceHistory(appContext.selected.name);
+    const priceHistory = await getPHOPriceHistory(appContext.selected.module);
     setPricehistory(priceHistory);
     setList(logs);
   };
@@ -103,7 +103,6 @@ export default function LogsList({ handleClose }) {
 
   async function handleStop() {
     const state = appContext.getTaskState(appContext.selected.module);
-
     const task_id = state ? state.id : appContext.selected.current_task_id;
 
     if (!task_id) {
@@ -111,7 +110,7 @@ export default function LogsList({ handleClose }) {
       return false;
     }
 
-    const data = await stopScraping(task_id);
+    const data = await stopScraping(task_id, appContext.selected.module);
 
     const newState = { error: null, id: null, state: "Stopped" };
     appContext.setTaskState(appContext.selected.module, newState);
@@ -126,6 +125,17 @@ export default function LogsList({ handleClose }) {
           <CardHeader
             action={
               <>
+                <IconButton onClick={handleClose}>X</IconButton>
+              </>
+            }
+            title={appContext.selected.name}
+          />
+          <Box sx={{ p: 1 }}>
+            <Box>
+                <ButtonGroup
+                  variant="contained"
+                  aria-label="outlined primary button group"
+                >
                 <Button
                   href={
                     "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" +
@@ -136,17 +146,10 @@ export default function LogsList({ handleClose }) {
                 >
                   View all practices
                 </Button>
-
-                <IconButton onClick={handleClose}>X</IconButton>
-              </>
-            }
-            title={appContext.selected.name}
-          />
-          <Box sx={{ p: 1 }}>
-            <Box>
               {appContext.selected.website && (
-                <Button href={appContext.selected.website}>Website</Button>
+                <Button href={appContext.selected.website}>PHO Website</Button>
               )}
+              </ButtonGroup>
             </Box>
             <Box>
               {sessionToken && appContext.selected.module && (

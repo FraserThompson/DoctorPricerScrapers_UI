@@ -36,7 +36,7 @@ export default function PHOListItem({ pho, handleSelect }) {
 
   async function updateTask() {
     const state = appContext.getTaskState(pho.module);
-    if (!pho || !state || !state.id) return;
+    if (!pho || !state || !state.id || state.state == "Error") return;
 
     console.log(
       "Checking the status of " + state["id"] + " from " + pho.module
@@ -65,7 +65,7 @@ export default function PHOListItem({ pho, handleSelect }) {
         appContext.setTaskState(pho.module, newState);
       }
     } else {
-      const newState = { id: null, state: "Error", error: response.error };
+      const newState = { ...state, state: "Error", error: response.error };
       appContext.setTaskState(pho.module, newState);
     }
   }
