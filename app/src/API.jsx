@@ -105,6 +105,26 @@ export async function getLogsList(name) {
   return data;
 }
 
+export async function clean() {
+  const response = await fetch(config.apiUrl + "/dp/clean/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Token " + getSessionToken(),
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error(errorText);
+    return { data: null, error: errorText };
+  }
+
+  const data = await response.json();
+
+  return { data: data, error: null };
+}
+
 export async function stopScraping(task_id, module) {
   const response = await fetch(
     config.apiUrl + "/dp/task_status?task_id=" + task_id + "&module=" + module,
