@@ -105,8 +105,8 @@ export async function getLogsList(name) {
   return data;
 }
 
-export async function clean() {
-  const response = await fetch(config.apiUrl + "/dp/clean/", {
+export async function clean(dry) {
+  const response = await fetch(config.apiUrl + "/dp/clean/" + (dry ? "?dry=Yes" : ""), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
