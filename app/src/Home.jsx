@@ -6,7 +6,7 @@ import Averages from "./Averages";
 import PriceHistory from "./PriceHistory";
 import AdminPanel from "./AdminPanel";
 
-export default function Home() {
+export default function Home({totalCount}) {
   const [averages, setAverages] = useState(null);
   const [priceHistory, setPricehistory] = useState(null);
 
@@ -22,6 +22,7 @@ export default function Home() {
 
   return (
     <Box p={2}>
+      <Typography variant="h5">Total Practices: <strong>{totalCount}</strong></Typography>
       <Typography variant="h5">Average fees by age</Typography>
       <Typography variant="subtitle1" gutterBottom>
         NZ Wide

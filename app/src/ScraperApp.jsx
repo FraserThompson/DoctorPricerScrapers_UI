@@ -47,6 +47,7 @@ export default function ScraperApp() {
   const [error, setGlobalError] = useState(false);
   const [selected, setSelected] = useState(null);
   const [taskStates, setTaskStates] = useState({});
+  const [totalCount, setTotalCount] = useState(0);
   const [sessionToken, setSessionToken] = useState(
     sessionStorage.getItem("dpSessionToken")
   );
@@ -64,6 +65,11 @@ export default function ScraperApp() {
         }
         return acc;
       }, {})
+      const count = phoList.reduce((acc, pho) => {
+        acc += pho['number_of_practices']
+        return acc;
+      }, 0)
+      setTotalCount(count)
       setTaskStates(states);
       setPhoList(phoList);
     };
@@ -111,7 +117,7 @@ export default function ScraperApp() {
           </Grid>
           <Grid item xs={8}>
             {selected && <LogsList handleClose={() => setSelected(null)} />}
-            {!selected && <Home />}
+            {!selected && <Home totalCount={totalCount}/>}
           </Grid>
         </Grid>
       </AppContext.Provider>
