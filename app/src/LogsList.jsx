@@ -190,7 +190,7 @@ export default function LogsList({ handleClose }) {
           </Box>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs value={tab} onChange={handleTabChange}>
-              <Tab label="Averages" />
+              <Tab label="Data" />
               <Tab label="Last Scrape" />
               <Tab label="Submission History" />
             </Tabs>
@@ -200,7 +200,14 @@ export default function LogsList({ handleClose }) {
             index={0}
             style={{ overflow: "auto", height: "73vh" }}
           >
-            <Typography variant="h5">Average fees for PHO by age</Typography>
+            <Typography variant="h6">
+              Total Practices: <strong>{appContext.selected.number_of_practices}</strong>
+            </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+              <strong>{Number((appContext.selected.number_enrolling / appContext.selected.number_of_practices) * 100).toFixed(2)}% enrolling</strong> (
+              {appContext.selected.number_enrolling} enrolling, {appContext.selected.number_notenrolling} not enrolling)
+            </Typography>
+            <Typography variant="h6">Average fees for PHO by age</Typography>
             <Averages data={appContext.selected.average_prices} />
             {priceHistory && <PriceHistory data={priceHistory} />}
           </TabPanel>

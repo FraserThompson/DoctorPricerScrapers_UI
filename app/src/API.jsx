@@ -105,9 +105,12 @@ export async function getLogsList(name) {
   return data;
 }
 
-export async function clean(dry) {
-  const response = await fetch(config.apiUrl + "/dp/clean/" + (dry ? "?dry=Yes" : ""), {
-    method: "POST",
+export async function clean(params) {
+  const stringParams = params.reduce((acc, param) => {
+    return acc + param + "=yes&"
+  }, "?")
+  const response = await fetch(config.apiUrl + "/dp/clean/" + stringParams, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Token " + getSessionToken(),

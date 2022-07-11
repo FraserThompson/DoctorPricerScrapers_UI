@@ -47,7 +47,7 @@ export default function ScraperApp() {
   const [error, setGlobalError] = useState(false);
   const [selected, setSelected] = useState(null);
   const [taskStates, setTaskStates] = useState({});
-  const [totalCount, setTotalCount] = useState(0);
+  const [meta, setMeta] = useState(null);
   const [sessionToken, setSessionToken] = useState(
     sessionStorage.getItem("dpSessionToken")
   );
@@ -69,7 +69,15 @@ export default function ScraperApp() {
         acc += pho['number_of_practices']
         return acc;
       }, 0)
-      setTotalCount(count)
+      const enrolling = phoList.reduce((acc, pho) => {
+        acc += pho['number_enrolling']
+        return acc;
+      }, 0)
+      const notEnrolling = phoList.reduce((acc, pho) => {
+        acc += pho['number_notenrolling']
+        return acc;
+      }, 0)
+      setMeta({count, enrolling, notEnrolling})
       setTaskStates(states);
       setPhoList(phoList);
     };
@@ -117,7 +125,7 @@ export default function ScraperApp() {
           </Grid>
           <Grid item xs={8}>
             {selected && <LogsList handleClose={() => setSelected(null)} />}
-            {!selected && <Home totalCount={totalCount}/>}
+            {!selected && <Home meta={meta}/>}
           </Grid>
         </Grid>
       </AppContext.Provider>
