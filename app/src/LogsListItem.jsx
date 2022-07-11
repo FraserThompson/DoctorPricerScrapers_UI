@@ -7,8 +7,15 @@ import Tab from "@mui/material/Tab";
 import { Box } from "@mui/system";
 import TabPanel from "./TabPanel";
 import { formatDate } from "./Utils";
+import ReactJson from "react-json-view";
 
-export default function LogsListItem({date, changes, errors, warnings, scraped}) {
+export default function LogsListItem({
+  date,
+  changes,
+  errors,
+  warnings,
+  scraped,
+}) {
   const [tab, setTab] = React.useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -27,17 +34,17 @@ export default function LogsListItem({date, changes, errors, warnings, scraped})
             <Tab label={"Submitted " + scraped.length}></Tab>
           </Tabs>
         </Box>
-        <TabPanel value={tab} index={0}>
-          <pre>{JSON.stringify(errors, null, 2)}</pre>
+        <TabPanel padding={0} value={tab} index={0}>
+          <ReactJson theme="pop" src={errors} />
         </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <pre>{JSON.stringify(warnings, null, 2)}</pre>
+        <TabPanel padding={0} value={tab} index={1}>
+          <ReactJson theme="pop" src={warnings} />
         </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <pre>{JSON.stringify(changes, null, 2)}</pre>
+        <TabPanel padding={0} value={tab} index={2}>
+          <ReactJson theme="pop" src={changes} />
         </TabPanel>
-        <TabPanel value={tab} index={3}>
-          <pre>{JSON.stringify(scraped, null, 2)}</pre>
+        <TabPanel padding={0} value={tab} index={3}>
+          <ReactJson theme="pop" src={scraped} />
         </TabPanel>
       </CardContent>
     </Card>

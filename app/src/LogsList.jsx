@@ -22,6 +22,7 @@ import {
   submitData,
 } from "./API";
 import { AppContext } from "./ScraperApp";
+import ReactJson from "react-json-view";
 
 export default function LogsList({ handleClose }) {
   const [tab, setTab] = useState(0);
@@ -206,11 +207,10 @@ export default function LogsList({ handleClose }) {
           <TabPanel
             value={tab}
             index={1}
+            padding={0}
             style={{ overflow: "auto", height: "73vh" }}
           >
-            <pre>
-              {JSON.stringify(appContext.selected.last_scrape, null, 2)}
-            </pre>
+            <ReactJson theme="pop" src={appContext.selected.last_scrape}/>
           </TabPanel>
           <TabPanel
             value={tab}

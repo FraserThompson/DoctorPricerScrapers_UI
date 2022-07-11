@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box, Button, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import ReactJson from 'react-json-view'
 import { clean } from "./API";
 import FormGroup from "@mui/material/FormGroup";
 
@@ -38,7 +39,7 @@ export default function AdminPanel() {
         </>
       )}
       {cleaning && <CircularProgress />}
-      <pre>{JSON.stringify(cleanResult, null, 2)}</pre>
+      <ReactJson theme="pop" src={cleanResult} />
     </>
   );
 }
