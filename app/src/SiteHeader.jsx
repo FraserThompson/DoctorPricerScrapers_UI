@@ -18,7 +18,7 @@ export default function SiteHeader() {
       }}
     >
       <Typography variant="h4" sx={{ color: "white", display: "inline-block" }}>
-        DoctorPricer Stats
+        DoctorPricer Data
       </Typography>
       <Box sx={{ display: "inline-block", paddingLeft: 1 }}>
         {appContext.username && (
