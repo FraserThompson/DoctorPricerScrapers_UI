@@ -107,11 +107,7 @@ export default function PriceHistory({ data }) {
         },
       ],
     };
-    return (
-      <Box p={2}>
-        <Line options={options} data={graphData} />
-      </Box>
-    );
+    return <Line options={options} data={graphData} />;
   } else {
     return <CircularProgress />;
   }

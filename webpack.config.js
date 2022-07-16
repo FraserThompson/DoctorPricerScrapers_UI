@@ -46,17 +46,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.css$/,
-          use: [
-            "style-loader",
-            {
-              loader: "css-loader",
-              options: {
-                modules: true,
-                sourceMap: true,
-                importLoaders: 1,
-              },
-            },
-          ],
+          use: ["style-loader", "css-loader"],
         },
         {
           test: /.js?$/,

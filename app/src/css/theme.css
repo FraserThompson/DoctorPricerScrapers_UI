@@ -1,3 +1,22 @@
 body {
     margin: 0px;
 }
+
+.map-info-box {
+    position: absolute;
+    z-index: 500;
+}
+
+.map-icon-practice .fa {
+    color: white;
+}
+
+.leaflet-tooltip {
+    margin: 0px !important;
+}
+.leaflet-tooltip p {
+    margin: 0px !important;
+}
+.leaflet-tooltip h4 {
+    margin: 0px !important;
+}

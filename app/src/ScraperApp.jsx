@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import PHOList from "./PHOList";
-import LogsList from "./LogsList";
+import ScraperPanel from "./ScraperPanel";
 import Error from "./Error";
-import { Grid, Paper, ThemeProvider } from "@mui/material";
+import { Dialog, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
 
 import "./css/theme.css";
 
 import { createTheme } from "@mui/material/styles";
-import { getPhoList } from "./API";
-import Home from "./Home";
+import { getPhoList, getPractices, getRegions } from "./API";
+import Map from "./Map";
 import SiteHeader from "./SiteHeader";
+import RegionList from "./RegionList";
 
 const theme = createTheme({
   palette: {
@@ -30,7 +31,8 @@ const theme = createTheme({
 
 const initialState = { error: null, id: null, state: null };
 const initialContext = {
-  selected: null,
+  selectedPho: null,
+  selectedRegion: null,
   taskStates: {},
   sessionToken: null,
   username: null,
@@ -44,10 +46,15 @@ export const AppContext = React.createContext(initialContext);
 
 export default function ScraperApp() {
   const [phoList, setPhoList] = useState([]);
+  const [filteredPhoList, setFilteredPhoList] = useState([]);
+  const [practiceList, setPracticeList] = useState(null);
+  const [regionList, setRegionList] = useState(null);
+
   const [error, setGlobalError] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const [selectedPho, setSelectedPho] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
   const [taskStates, setTaskStates] = useState({});
-  const [meta, setMeta] = useState(null);
+
   const [sessionToken, setSessionToken] = useState(
     sessionStorage.getItem("dpSessionToken")
   );
@@ -59,30 +66,50 @@ export default function ScraperApp() {
   useEffect(() => {
     const fetchData = async () => {
       const phoList = await getPhoList();
+      const regionList = await getRegions();
       const states = phoList.reduce((acc, pho) => {
         acc[pho.module] = {
-          id: pho.current_task_id
-        }
+          id: pho.current_task_id,
+        };
         return acc;
-      }, {})
-      const count = phoList.reduce((acc, pho) => {
-        acc += pho['number_of_practices']
-        return acc;
-      }, 0)
-      const enrolling = phoList.reduce((acc, pho) => {
-        acc += pho['number_enrolling']
-        return acc;
-      }, 0)
-      const notEnrolling = phoList.reduce((acc, pho) => {
-        acc += pho['number_notenrolling']
-        return acc;
-      }, 0)
-      setMeta({count, enrolling, notEnrolling})
+      }, {});
+      setRegionList(regionList);
+      setSelectedRegion(
+        regionList.find((region) => region.name == "New Zealand")
+      );
       setTaskStates(states);
       setPhoList(phoList);
+      setFilteredPhoList(phoList);
     };
     fetchData();
   }, []);
+
+  // When a region is selected...
+  useEffect(() => {
+    if (!regionList) return;
+
+    if (selectedRegion.name == "New Zealand") {
+      console.log("setting to new zealand");
+      setPracticeList(null);
+      setFilteredPhoList(phoList);
+      return;
+    }
+
+    const fetchData = async () => {
+      const region = await getRegions({
+        name: selectedRegion.name,
+        practices: "yes",
+      });
+      if (region && region.length) {
+        setPracticeList(region[0]["practices"]);
+        setFilteredPhoList(
+          phoList.filter((pho) => region[0]["phos"].includes(pho.id))
+        );
+      }
+    };
+
+    fetchData();
+  }, [selectedRegion]);
 
   function setTaskState(moduleName, state) {
     const newTaskStates = { ...taskStates };
@@ -98,7 +125,8 @@ export default function ScraperApp() {
     <ThemeProvider theme={theme}>
       <AppContext.Provider
         value={{
-          selected,
+          selectedPho,
+          selectedRegion,
           taskStates,
           sessionToken,
           username,
@@ -111,21 +139,59 @@ export default function ScraperApp() {
       >
         <SiteHeader />
         <Grid container>
-          <Grid item xs={4}>
+          <Grid item lg={3} xl={2}>
+            <Paper
+              elevation={3}
+              square
+              style={{ height: "calc(100vh - 60px)", overflow: "auto" }}
+            >
+              {regionList && (
+                <RegionList
+                  data={regionList.filter(
+                    (region) => region.name != "New Zealand"
+                  )}
+                  handleSelect={(item) =>
+                    setSelectedRegion(
+                      item ||
+                        regionList.find(
+                          (region) => region.name == "New Zealand"
+                        )
+                    )
+                  }
+                  selected={selectedRegion}
+                />
+              )}
+            </Paper>
+          </Grid>
+          <Grid item lg={6} xl={8}>
+            <Map
+              regionList={regionList}
+              practiceList={practiceList}
+              selectedRegion={selectedRegion}
+              handleSelect={setSelectedRegion}
+            />
+          </Grid>
+          <Grid item lg={3} xl={2}>
             <Paper
               elevation={3}
               square
               style={{ height: "calc(100vh - 60px)", overflow: "auto" }}
             >
               <PHOList
-                list={phoList}
-                handleSelect={(item) => setSelected(item)}
+                data={filteredPhoList}
+                handleSelect={(item) => setSelectedPho(item)}
+                selected={selectedPho}
               />
+              {phoList && selectedPho && (
+                <Dialog
+                  fullScreen
+                  open={selectedPho != null}
+                  onClose={() => setSelectedPho(null)}
+                >
+                  <ScraperPanel handleClose={() => setSelectedPho(null)} />
+                </Dialog>
+              )}
             </Paper>
-          </Grid>
-          <Grid item xs={8}>
-            {selected && <LogsList handleClose={() => setSelected(null)} />}
-            {!selected && <Home meta={meta}/>}
           </Grid>
         </Grid>
       </AppContext.Provider>

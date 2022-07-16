@@ -9,30 +9,43 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
 
 export default function Averages({ data }) {
+  const formattedPrice = (number) => {
+    return "$" + (number ? parseFloat(number).toFixed(2) : 0);
+  };
   if (data && data.length > 0) {
     return (
       <TableContainer component={Paper}>
         <Table style={{ marginTop: 10 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Age</TableCell>
-              <TableCell>0</TableCell>
-              <TableCell>6</TableCell>
-              <TableCell>14</TableCell>
-              <TableCell>18</TableCell>
-              <TableCell>25</TableCell>
-              <TableCell>45</TableCell>
-              <TableCell>65</TableCell>
+              <TableCell><strong>Age</strong></TableCell>
+              <TableCell><strong>0</strong></TableCell>
+              <TableCell><strong>6</strong></TableCell>
+              <TableCell><strong>14</strong></TableCell>
+              <TableCell><strong>18</strong></TableCell>
+              <TableCell><strong>25</strong></TableCell>
+              <TableCell><strong>45</strong></TableCell>
+              <TableCell><strong>65</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>Price</TableCell>
+              <TableCell>
+                <strong>Average</strong>
+              </TableCell>
               {data.map((item, idx) => (
                 <TableCell key={idx}>
-                  $
-                  {(item.price__avg || item.average) &&
-                    parseFloat(item.price__avg || item.average).toFixed(2)}
+                  {formattedPrice(item.price__avg || item.average)}
+                </TableCell>
+              ))}
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <strong>Max</strong>
+              </TableCell>
+              {data.map((item, idx) => (
+                <TableCell key={idx}>
+                  {formattedPrice(item.price__max || item.max)}
                 </TableCell>
               ))}
             </TableRow>

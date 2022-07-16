@@ -2,13 +2,13 @@ import React from "react";
 import PHOListItem from "./PHOListItem";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ListSubheader } from "@mui/material";
 
-export default function PHOList({list, handleSelect, updateTask}) {
-  
+export default function PHOList({ data, handleSelect, updateTask }) {
   let phoList = <CircularProgress />;
 
-  if (list.length > 0) {
-    phoList = list.map((pho, index) => {
+  if (data.length > 0) {
+    phoList = data.map((pho, index) => {
       return (
         <PHOListItem
           key={index}
@@ -20,5 +20,10 @@ export default function PHOList({list, handleSelect, updateTask}) {
     });
   }
 
-  return <List>{phoList}</List>;
+  return (
+    <List>
+      <ListSubheader>Scrapers</ListSubheader>
+      {phoList}
+    </List>
+  );
 }

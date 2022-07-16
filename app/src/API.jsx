@@ -24,6 +24,20 @@ export async function login(username, password) {
   
 }
 
+export async function getPractices(params) {
+  const paramString = params ? Object.entries(params).map(([key, val]) => key + "=" + val).join("&") : ""
+  const response = await fetch(config.apiUrl + "/dp/api/practices/?" + paramString);
+
+  if (!response.ok) {
+    console.error("Couldn't get Practices: " + await response.text());
+    return null;
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+
 export async function getAverages() {
   const response = await fetch(config.apiUrl + "/dp/averages/");
 
@@ -79,6 +93,19 @@ export async function getPHOAverages(name) {
   } else {
     return data;
   }
+}
+
+export async function getRegions(params) {
+  const paramString = params ? Object.entries(params).map(([key, val]) => key + "=" + val).join("&") : ""
+  const response = await fetch(config.apiUrl + "/dp/api/region/?" + paramString);
+
+  if (!response.ok) {
+    console.error(response);
+    return null;
+  }
+
+  const data = await response.json();
+  return data;
 }
 
 export async function getPhoList() {
