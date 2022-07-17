@@ -1,30 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import ReactDOMServer from "react-dom/server";
+import MapPopup from "./MapPopup";
+import { MapContext } from "./Map";
 
 require("drmonty-leaflet-awesome-markers/js/leaflet.awesome-markers.js");
 require("drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css");
 
-export default function MapMarkers({ practiceList }) {
+export default function MapMarkers({
+  practiceList,
+  selected,
+  handleSelectPractice,
+}) {
   const map = useMap();
+
+  const context = useContext(MapContext);
+
   const [layer, setLayer] = useState(null);
   const [markers, setMarkers] = useState(null);
 
   const getMarkerColor = (active) => (active ? "green" : "gray transparent");
 
-  const getMarkerLabel = (price) => {
+  const getMarkerLabel = (all_prices) => {
+    const priceset = all_prices.find(
+      (priceset) => priceset.from_age == context.age
+    );
+    const price = priceset ? priceset.price : "1000";
     if (price == "1000") {
-      return "?"
+      return "?";
     } else if (price == "999") {
-      return "X"
+      return "X";
     } else {
-      return "$" + price.toFixed(2).replace(".00", "") //probably a better way of doing this lol
+      return "$" + price.toFixed(2).replace(".00", ""); //probably a better way of doing this lol
     }
-  }
+  };
 
   const getMarkerIcon = (practice) => {
     const iconMarkup = ReactDOMServer.renderToString(
-      <i className=" fa fa-map-marker-alt fa-3x">{getMarkerLabel(practice.price)}</i>
+      <i className=" fa fa-map-marker-alt fa-3x">
+        {getMarkerLabel(practice.all_prices)}
+      </i>
     );
 
     return L.divIcon({
@@ -44,7 +59,7 @@ export default function MapMarkers({ practiceList }) {
   };
 
   const makeMarkers = (list) => {
-    const markers = list.map((practice) => {
+    const markers = list.map((practice, index) => {
       const coords = [practice.lat, practice.lng];
 
       const marker = L.marker(coords, {
@@ -52,27 +67,9 @@ export default function MapMarkers({ practiceList }) {
         icon: getMarkerIcon(practice),
       });
 
-      const markerContent = ReactDOMServer.renderToString(
-        <h5>
-          <a href={practice.url} target="_blank">
-            {practice.name}
-          </a>
-          <br />
-          {!practice.active ? (
-            <>
-              <small>
-                <strong>Not Enrolling Patients</strong>
-              </small>
-              <br />
-            </>
-          ) : (
-            <></>
-          )}
-          <small>Phone: {practice.phone}</small>
-          <br />
-          <small>{practice.pho}</small>
-        </h5>
-      );
+      const markerContent = MapPopup(practice);
+
+      marker.on("click", (e) => handleSelectPractice(index));
 
       marker.bindPopup(markerContent, {
         autoclose: false,
@@ -104,6 +101,19 @@ export default function MapMarkers({ practiceList }) {
     setMarkers(markers);
     setLayer(markersLayer);
   }, [practiceList]);
+
+  // On practice selected
+  useEffect(() => {
+    selected != undefined && markers[selected].openPopup();
+  }, [selected]);
+
+  // On age change
+  useEffect(() => {
+    markers &&
+      markers.forEach((marker, index) => {
+        marker.setIcon(getMarkerIcon(practiceList[index]));
+      });
+  }, [context.age]);
 
   return <></>;
 }

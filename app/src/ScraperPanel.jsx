@@ -220,7 +220,7 @@ export default function ScraperPanel({ handleClose }) {
           <TabPanel
             value={tab}
             index={0}
-            style={{ overflow: "auto", height: "89vh" }}
+            style={{ overflow: "auto", height: "75vh" }}
           >
             <Typography variant="h6">
               Total Practices:{" "}
@@ -246,14 +246,14 @@ export default function ScraperPanel({ handleClose }) {
             value={tab}
             index={1}
             padding={0}
-            style={{ overflow: "auto", height: "89vh" }}
+            style={{ overflow: "auto", height: "75vh" }}
           >
             <ReactJson theme="pop" src={appContext.selectedPho.last_scrape} />
           </TabPanel>
           <TabPanel
             value={tab}
             index={2}
-            style={{ overflow: "auto", height: "89vh" }}
+            style={{ overflow: "auto", height: "75vh" }}
           >
             {list ? (
               list.map((item, index) => {

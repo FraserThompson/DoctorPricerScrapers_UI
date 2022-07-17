@@ -1,24 +1,42 @@
-import { CircularProgress, Grid, Paper, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Grid,
+  IconButton,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
 import Averages from "./Averages";
 import PriceHistory from "./PriceHistory";
 
 export default function MapBottomInfoPanel({ region }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <Paper
       elevation={3}
       className="map-info-box"
       style={{
-        height: "330px",
+        height: !collapsed ? "330px" : "50px",
+        overflow: "hidden",
+        transition: "height 0.2s",
         width: "calc(100% - 100px)",
         bottom: "10px",
-        left: "50px"
+        left: "50px",
       }}
     >
       <Box p={2}>
         <Grid container>
           <Grid item xs={6}>
+            <Typography variant="h6">
+              <IconButton
+                ariba-label="minimize"
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                X
+              </IconButton>
+            </Typography>
             <Typography variant="h6">
               {region.name}: Average fees by age
             </Typography>

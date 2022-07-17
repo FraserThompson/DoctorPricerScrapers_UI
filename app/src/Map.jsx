@@ -18,7 +18,9 @@ export default function Map({
   practiceList,
   regionList,
   selectedRegion,
-  handleSelect,
+  selectedPractice,
+  handleSelectPractice,
+  handleSelectRegion,
 }) {
   const sessionToken = getSessionToken();
 
@@ -45,12 +47,18 @@ export default function Map({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token={apikey}"
           />
-          {<MapMarkers practiceList={practiceList} />}
+          {
+            <MapMarkers
+              practiceList={practiceList}
+              selected={selectedPractice}
+              handleSelectPractice={handleSelectPractice}
+            />
+          }
           {regionList && (
             <MapRegions
               regions={regionList}
               selected={selectedRegion}
-              handleSelect={handleSelect}
+              handleSelectRegion={handleSelectRegion}
             />
           )}
           {selectedRegion && <MapBottomInfoPanel region={selectedRegion} />}

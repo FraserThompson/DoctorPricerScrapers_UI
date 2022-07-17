@@ -11,6 +11,7 @@ import { getPhoList, getPractices, getRegions } from "./API";
 import Map from "./Map";
 import SiteHeader from "./SiteHeader";
 import RegionList from "./RegionList";
+import RightPanel from "./RightPanel";
 
 const theme = createTheme({
   palette: {
@@ -52,7 +53,9 @@ export default function ScraperApp() {
 
   const [error, setGlobalError] = useState(false);
   const [selectedPho, setSelectedPho] = useState(null);
+  const [selectedPractice, setSelectedPractice] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
+
   const [taskStates, setTaskStates] = useState({});
 
   const [sessionToken, setSessionToken] = useState(
@@ -98,7 +101,7 @@ export default function ScraperApp() {
     const fetchData = async () => {
       const region = await getRegions({
         name: selectedRegion.name,
-        practices: "yes",
+        practices: true,
       });
       if (region && region.length) {
         setPracticeList(region[0]["practices"]);
@@ -168,7 +171,9 @@ export default function ScraperApp() {
               regionList={regionList}
               practiceList={practiceList}
               selectedRegion={selectedRegion}
-              handleSelect={setSelectedRegion}
+              selectedPractice={selectedPractice}
+              handleSelectRegion={setSelectedRegion}
+              handleSelectPractice={setSelectedPractice}
             />
           </Grid>
           <Grid item lg={3} xl={2}>
@@ -177,10 +182,13 @@ export default function ScraperApp() {
               square
               style={{ height: "calc(100vh - 60px)", overflow: "auto" }}
             >
-              <PHOList
-                data={filteredPhoList}
-                handleSelect={(item) => setSelectedPho(item)}
-                selected={selectedPho}
+              <RightPanel
+                phoList={filteredPhoList}
+                practiceList={practiceList}
+                selectedPho={selectedPho}
+                selectedPractice={selectedPractice}
+                handleSelectPho={(item) => setSelectedPho(item)}
+                handleSelectPractice={(item) => setSelectedPractice(item)}
               />
               {phoList && selectedPho && (
                 <Dialog
