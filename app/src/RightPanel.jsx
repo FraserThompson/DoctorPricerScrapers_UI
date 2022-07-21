@@ -26,7 +26,7 @@ export default function RightPanel({
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={openTab} onChange={handleChange} aria-label="tabs">
           <Tab label="Scrapers" />
-          {practiceList && <Tab label="Practices" />}
+          {practiceList && <Tab label={"Practices (" + practiceList.length + ")"} />}
         </Tabs>
       </Box>
       <TabPanel p={0} value={openTab} index={0}>

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import ReactDOMServer from "react-dom/server";
 import MapPopup from "./MapPopup";
-import { MapContext } from "./Map";
+import { AppContext } from "../ScraperApp";
 
 require("drmonty-leaflet-awesome-markers/js/leaflet.awesome-markers.js");
 require("drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css");
@@ -14,7 +14,7 @@ export default function MapMarkers({
 }) {
   const map = useMap();
 
-  const context = useContext(MapContext);
+  const context = useContext(AppContext);
 
   const [layer, setLayer] = useState(null);
   const [markers, setMarkers] = useState(null);

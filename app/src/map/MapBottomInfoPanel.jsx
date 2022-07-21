@@ -7,8 +7,8 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import Averages from "./Averages";
-import PriceHistory from "./PriceHistory";
+import Averages from "../Averages";
+import PriceHistory from "../PriceHistory";
 
 export default function MapBottomInfoPanel({ region }) {
   const [collapsed, setCollapsed] = useState(false);

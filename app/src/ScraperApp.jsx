@@ -8,7 +8,7 @@ import "./css/theme.css";
 
 import { createTheme } from "@mui/material/styles";
 import { getPhoList, getPractices, getRegions } from "./API";
-import Map from "./Map";
+import Map from "./map/Map";
 import SiteHeader from "./SiteHeader";
 import RegionList from "./RegionList";
 import RightPanel from "./RightPanel";
@@ -37,6 +37,8 @@ const initialContext = {
   taskStates: {},
   sessionToken: null,
   username: null,
+  age: 25,
+  setAge: () => {},
   setTaskState: () => {},
   getTaskState: () => {},
   setGlobalError: () => {},
@@ -46,6 +48,9 @@ const initialContext = {
 export const AppContext = React.createContext(initialContext);
 
 export default function ScraperApp() {
+  
+  const [age, setAge] = useState(25);
+
   const [phoList, setPhoList] = useState([]);
   const [filteredPhoList, setFilteredPhoList] = useState([]);
   const [practiceList, setPracticeList] = useState(null);
@@ -133,6 +138,8 @@ export default function ScraperApp() {
           taskStates,
           sessionToken,
           username,
+          age,
+          setAge,
           setTaskState,
           getTaskState,
           setGlobalError,

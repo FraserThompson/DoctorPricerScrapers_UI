@@ -8,9 +8,13 @@ import {
   ListSubheader,
   Typography,
 } from "@mui/material";
+import { getRegionAverage } from "./map/MapInfoPanel";
+import { useContext } from "react";
+import { AppContext } from "./ScraperApp";
 
 export default function RegionList({ data, handleSelect, selected }) {
   let list = <CircularProgress />;
+  const context = useContext(AppContext)
 
   if (data && data.length > 0) {
     list = data.map((item, index) => {
@@ -21,8 +25,8 @@ export default function RegionList({ data, handleSelect, selected }) {
           onClick={() => handleSelect(item)}
         >
           <ListItemIcon>
-            <Typography variant="h5">
-              {String(item.number_of_practices)}
+            <Typography variant="subtitle2">
+              ${getRegionAverage(item, context.age)}
             </Typography>
           </ListItemIcon>
           <ListItemText primary={item.name}></ListItemText>

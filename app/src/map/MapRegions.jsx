@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import ReactDOMServer from "react-dom/server";
-import { MapContext } from "./Map";
+import { AppContext } from "../ScraperApp";
 import MapRegionPopup from "./MapRegionPopup";
 
 export default function MapRegions({ regions, selected, handleSelectRegion }) {
   const map = useMap();
+
   const [regionLayers, setRegionLayers] = useState(null);
   const [tooltips, setTooltips] = useState(null);
   const [tooltipIndexMap, setTooltipIndexMap] = useState(null);
 
-  const context = useContext(MapContext);
+  const context = useContext(AppContext);
 
   const getRegionFromTooltipIndex = (i) => {
     const regionId = tooltipIndexMap[i];

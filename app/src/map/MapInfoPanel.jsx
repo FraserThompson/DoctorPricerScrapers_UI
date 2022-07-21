@@ -1,16 +1,16 @@
 import { Box, Paper, Typography } from "@mui/material";
 import React, { useContext } from "react";
-import { MapContext } from "./Map";
+import { AppContext } from "../ScraperApp";
+
+export const getRegionAverage = (region, age) => {
+  const averageRow = region.averages.find(
+    (average) => average.from_age__max == age
+  );
+  return averageRow ? Number(averageRow["price__avg"]).toFixed(2) : 0;
+};
 
 export default function MapInfoPanel({ region }) {
-  const context = useContext(MapContext);
-
-  const getAveragePrice = () => {
-    const averageRow = region.averages.find(
-      (average) => average.from_age__max == context.age
-    );
-    return averageRow ? Number(averageRow["price__avg"]).toFixed(2) : 0;
-  };
+  const context = useContext(AppContext);
 
   return (
     <Paper
@@ -18,7 +18,7 @@ export default function MapInfoPanel({ region }) {
       className="map-info-box"
       style={{
         top: "10px",
-        left: "50px"
+        left: "50px",
       }}
     >
       <Box p={2}>
@@ -36,7 +36,7 @@ export default function MapInfoPanel({ region }) {
           enrolling
         </Typography>
         <Typography variant="subtitle1">
-          <strong>${getAveragePrice()}</strong> average
+          <strong>${getRegionAverage(region, context.age)}</strong> average
         </Typography>
       </Box>
     </Paper>

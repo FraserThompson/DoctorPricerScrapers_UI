@@ -7,12 +7,12 @@ import {
   Select,
 } from "@mui/material";
 import React, { useContext } from "react";
-import { MapContext } from "./Map";
+import { AppContext } from "../ScraperApp";
 
 export default function MapAgeSelector() {
   const ages = [0, 6, 14, 18, 25, 45, 65];
 
-  const context = useContext(MapContext);
+  const context = useContext(AppContext);
 
   return (
     <Paper
