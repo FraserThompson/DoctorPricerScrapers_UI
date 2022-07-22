@@ -10,7 +10,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import { DialogActions, Typography } from "@mui/material";
+import { DialogActions, ListItem, Typography } from "@mui/material";
 import { AppContext } from "./ScraperApp";
 import { checkTask } from "./API";
 
@@ -27,7 +27,6 @@ export default function PHOListItem({ pho, handleSelect }) {
     if (state && state.id) {
       updateTask(pho);
     }
-
   }, [appContext.taskStates]);
 
   function handleDialogToggle() {
@@ -74,36 +73,41 @@ export default function PHOListItem({ pho, handleSelect }) {
 
   return (
     <>
-      <ListItemButton onClick={() => handleSelect(pho)}>
-        <ListItemIcon>
-          <Typography variant="h5">
-            {String(pho.number_of_practices)}
-          </Typography>
-        </ListItemIcon>
-        <ListItemText
-          primary={pho.name}
-          secondary={
-            <>
-              {theState && (
-                <>
-                  {theState.state}{" "}
-                  {theState.error && !time && (
-                    <Button onClick={() => handleDialogToggle()} color="error">
-                      Show
-                    </Button>
-                  )}
-                </>
-              )}
-              {time && (
-                <span>
-                  since <Moment fromNow>{time}</Moment>
-                </span>
-              )}
-              {!time && <>Last Scrape: {formatDate(pho.last_run)}</>}
-            </>
-          }
-        ></ListItemText>
-      </ListItemButton>
+      <ListItem disablePadding>
+        <ListItemButton onClick={() => handleSelect(pho)}>
+          <ListItemIcon>
+            <Typography variant="h5">
+              {String(pho.number_of_practices)}
+            </Typography>
+          </ListItemIcon>
+          <ListItemText
+            primary={pho.name}
+            secondary={
+              <>
+                {theState && (
+                  <>
+                    {theState.state}{" "}
+                    {theState.error && !time && (
+                      <Button
+                        onClick={() => handleDialogToggle()}
+                        color="error"
+                      >
+                        Show
+                      </Button>
+                    )}
+                  </>
+                )}
+                {time && (
+                  <span>
+                    since <Moment fromNow>{time}</Moment>
+                  </span>
+                )}
+                {!time && <>Last Scrape: {formatDate(pho.last_run)}</>}
+              </>
+            }
+          ></ListItemText>
+        </ListItemButton>
+      </ListItem>
       <Dialog open={dialogActive}>
         <DialogTitle>
           {pho.name + " Error"}

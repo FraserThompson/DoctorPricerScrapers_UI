@@ -16,7 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-
+import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 
 import TabPanel from "./TabPanel";
@@ -137,42 +137,40 @@ export default function ScraperPanel({ handleClose }) {
   return (
     <>
       {appContext.selectedPho != null && (
-        <Card variant="outlined">
-          <AppBar sx={{ position: "relative" }}>
-            <Toolbar>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={handleClose}
-                aria-label="close"
+        <Card variant="outlined" sx={{ marginTop: "62px" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleClose}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              {appContext.selectedPho.name}
+            </Typography>
+            <ButtonGroup
+              variant="contained"
+              aria-label="outlined primary button group"
+            >
+              <Button
+                href={
+                  "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" +
+                  appContext.selectedPho.name
+                }
+                target="_blank"
+                color="success"
               >
-                X
-              </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                {appContext.selectedPho.name}
-              </Typography>
-              <ButtonGroup
-                variant="contained"
-                aria-label="outlined primary button group"
-              >
-                <Button
-                  href={
-                    "https://api.doctorpricer.co.nz/dp/api/practices/?pho=" +
-                    appContext.selectedPho.name
-                  }
-                  target="_blank"
-                  color="success"
-                >
-                  View all practices
+                View all practices
+              </Button>
+              {appContext.selectedPho.website && (
+                <Button href={appContext.selectedPho.website}>
+                  PHO Website
                 </Button>
-                {appContext.selectedPho.website && (
-                  <Button href={appContext.selectedPho.website}>
-                    PHO Website
-                  </Button>
-                )}
-              </ButtonGroup>
-            </Toolbar>
-          </AppBar>
+              )}
+            </ButtonGroup>
+          </Toolbar>
           <Box sx={{ p: 1 }}>
             <Box>
               {sessionToken && appContext.selectedPho.module && (

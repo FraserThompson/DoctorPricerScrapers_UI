@@ -1,26 +1,35 @@
 import React, { useContext } from "react";
-import Box from "@mui/material/Box";
-import { Paper, Typography } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
 import Login from "./Login";
 import { AppContext } from "./ScraperApp";
 
-export default function SiteHeader() {
+export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
   const appContext = useContext(AppContext);
   return (
-    <Paper
+    <AppBar
       elevation={3}
-      square
+      position="fixed"
       sx={{
         backgroundColor: "primary.dark",
         p: 1,
+        zIndex: 2000,
         boxSizing: "border-box",
-        height: "60px",
       }}
     >
-      <Typography variant="h4" sx={{ color: "white", display: "inline-block" }}>
-        DoctorPricer Data
-      </Typography>
-      <Box sx={{ display: "inline-block", paddingLeft: 1 }}>
+      <Toolbar variant="dense">
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={handleLeftToggle}
+          sx={{ mr: 2, display: { lg: "none" } }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h4" sx={{ color: "white", flexGrow: 1 }}>
+          DoctorPricer Data
+        </Typography>
         {appContext.username && (
           <Typography
             variant="h6"
@@ -29,10 +38,17 @@ export default function SiteHeader() {
             Logged in as {appContext.username}
           </Typography>
         )}
-      </Box>
-      <Box sx={{ display: "inline-block", float: "right" }}>
         <Login />
-      </Box>
-    </Paper>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="end"
+          onClick={handleRightToggle}
+          sx={{ mr: 2, display: { lg: "none" } }}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
   );
 }

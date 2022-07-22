@@ -6,3 +6,13 @@ export function formatDate(date) {
 
   return day + "/" + (monthIndex + 1) + "/" + year;
 }
+
+export function getPriceByAge(all_prices, target_age) {
+  const price = all_prices.reduce((acc, priceset) => {
+    console.log(priceset)
+    if (priceset.from_age <= target_age) acc = priceset.price;
+    return acc;
+  }, 1000);
+
+  return price;
+}

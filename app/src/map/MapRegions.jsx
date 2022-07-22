@@ -21,7 +21,9 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
   useEffect(() => {
     tooltips &&
       tooltips.forEach((tooltip, i) =>
-        tooltip.setContent(MapRegionPopup(getRegionFromTooltipIndex(i), context.age))
+        tooltip.setContent(
+          MapRegionPopup(getRegionFromTooltipIndex(i), context.age)
+        )
       );
   }, [context.age]);
 
@@ -29,18 +31,28 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
   useEffect(() => {
     if (!regionLayers) return;
 
-    if (selected.name == "New Zealand") {
+    const layers = regionLayers.getLayers();
+    const inactiveLayerStyle = { fillColor: "rgb(51, 136, 255)" };
+    const selectedLayerStyle = { fillColor: "rgb(71, 255, 51)" };
+
+    if (!selected) {
       map.fitBounds(regionLayers.getBounds());
       tooltips.forEach((tooltip) => tooltip.openOn(map));
+      layers.forEach((layer) => layer.setStyle(inactiveLayerStyle));
       return;
     }
 
     tooltips.forEach((tooltip) => tooltip.close());
 
-    const layer = regionLayers
-      .getLayers()
-      .find((layer) => layer.id == selected.id);
-    map.fitBounds(layer.getBounds());
+    layers.forEach((layer) =>
+      layer.id != selected.id
+        ? layer.setStyle(inactiveLayerStyle)
+        : layer.setStyle(selectedLayerStyle)
+    );
+
+    const selectedLayer = layers.find((layer) => layer.id == selected.id);
+
+    map.fitBounds(selectedLayer.getBounds());
   }, [selected]);
 
   // On init
@@ -49,8 +61,6 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
 
     const geoJsonGroup = L.geoJSON();
     geoJsonGroup.addTo(map);
-
-    regions = regions.filter((region) => region.name != "New Zealand");
 
     // Add the region layers to the map
     regions.forEach((region, i) => {

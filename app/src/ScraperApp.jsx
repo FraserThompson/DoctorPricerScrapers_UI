@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import PHOList from "./PHOList";
 import ScraperPanel from "./ScraperPanel";
 import Error from "./Error";
-import { Dialog, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
+import {
+  Dialog,
+  Drawer,
+  Grid,
+  Paper,
+  SwipeableDrawer,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 
 import "./css/theme.css";
 
@@ -12,6 +20,7 @@ import Map from "./map/Map";
 import SiteHeader from "./SiteHeader";
 import RegionList from "./RegionList";
 import RightPanel from "./RightPanel";
+import { Box } from "@mui/system";
 
 const theme = createTheme({
   palette: {
@@ -34,10 +43,12 @@ const initialState = { error: null, id: null, state: null };
 const initialContext = {
   selectedPho: null,
   selectedRegion: null,
+  selectedPractice: null,
   taskStates: {},
   sessionToken: null,
   username: null,
   age: 25,
+  setSelectedRegion: () => {},
   setAge: () => {},
   setTaskState: () => {},
   getTaskState: () => {},
@@ -48,8 +59,10 @@ const initialContext = {
 export const AppContext = React.createContext(initialContext);
 
 export default function ScraperApp() {
-  
   const [age, setAge] = useState(25);
+
+  const [leftOpen, setLeftOpen] = useState(false);
+  const [rightOpen, setRightOpen] = useState(false);
 
   const [phoList, setPhoList] = useState([]);
   const [filteredPhoList, setFilteredPhoList] = useState([]);
@@ -60,6 +73,7 @@ export default function ScraperApp() {
   const [selectedPho, setSelectedPho] = useState(null);
   const [selectedPractice, setSelectedPractice] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
+  const [defaultRegion, setDefaultRegion] = useState(null);
 
   const [taskStates, setTaskStates] = useState({});
 
@@ -75,17 +89,24 @@ export default function ScraperApp() {
     const fetchData = async () => {
       const phoList = await getPhoList();
       const regionList = await getRegions();
+
       const states = phoList.reduce((acc, pho) => {
         acc[pho.module] = {
           id: pho.current_task_id,
         };
         return acc;
       }, {});
-      setRegionList(regionList);
-      setSelectedRegion(
-        regionList.find((region) => region.name == "New Zealand")
+
+      const nz = regionList.find((region) => region.name == "New Zealand");
+      const regions = regionList.filter(
+        (region) => region.name != "New Zealand"
       );
+
+      setRegionList(regions);
+      setDefaultRegion(nz);
+
       setTaskStates(states);
+
       setPhoList(phoList);
       setFilteredPhoList(phoList);
     };
@@ -96,8 +117,9 @@ export default function ScraperApp() {
   useEffect(() => {
     if (!regionList) return;
 
-    if (selectedRegion.name == "New Zealand") {
-      console.log("setting to new zealand");
+    setPracticeList(null);
+
+    if (!selectedRegion) {
       setPracticeList(null);
       setFilteredPhoList(phoList);
       return;
@@ -129,16 +151,55 @@ export default function ScraperApp() {
     return taskStates[moduleName];
   }
 
+  const leftDrawer = (
+    <Paper elevation={3} square sx={{ paddingTop: "62px" }}>
+      {regionList && (
+        <RegionList
+          data={regionList}
+          handleSelect={setSelectedRegion}
+          selected={selectedRegion}
+        />
+      )}
+    </Paper>
+  );
+
+  const rightDrawer = (
+    <Paper elevation={3} square sx={{ paddingTop: "62px" }}>
+      <RightPanel
+        phoList={filteredPhoList}
+        practiceList={practiceList}
+        selectedPho={selectedPho}
+        selectedPractice={selectedPractice}
+        handleSelectPho={(item) => setSelectedPho(item)}
+        handleSelectPractice={(item) => setSelectedPractice(item)}
+      />
+      {phoList && selectedPho && (
+        <Dialog
+          fullScreen
+          open={selectedPho != null}
+          onClose={() => setSelectedPho(null)}
+        >
+          <ScraperPanel handleClose={() => setSelectedPho(null)} />
+        </Dialog>
+      )}
+    </Paper>
+  );
+
+  const sidebarWidth = "300px";
+
   return (
     <ThemeProvider theme={theme}>
       <AppContext.Provider
         value={{
           selectedPho,
+          defaultRegion,
           selectedRegion,
+          selectedPractice,
           taskStates,
           sessionToken,
           username,
           age,
+          setSelectedRegion,
           setAge,
           setTaskState,
           getTaskState,
@@ -147,68 +208,83 @@ export default function ScraperApp() {
           setUsername,
         }}
       >
-        <SiteHeader />
-        <Grid container>
-          <Grid item lg={3} xl={2}>
-            <Paper
-              elevation={3}
-              square
-              style={{ height: "calc(100vh - 60px)", overflow: "auto" }}
-            >
-              {regionList && (
-                <RegionList
-                  data={regionList.filter(
-                    (region) => region.name != "New Zealand"
-                  )}
-                  handleSelect={(item) =>
-                    setSelectedRegion(
-                      item ||
-                        regionList.find(
-                          (region) => region.name == "New Zealand"
-                        )
-                    )
-                  }
-                  selected={selectedRegion}
-                />
-              )}
-            </Paper>
-          </Grid>
-          <Grid item lg={6} xl={8}>
+        <Box sx={{ display: "flex" }}>
+          <SiteHeader
+            handleLeftToggle={() => setLeftOpen(!leftOpen)}
+            handleRightToggle={() => setRightOpen(!rightOpen)}
+          />
+          <SwipeableDrawer
+            variant="temporary"
+            open={leftOpen}
+            onClose={() => setLeftOpen(!leftOpen)}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: "block", sm: "block", md: "block", lg: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: sidebarWidth,
+              },
+            }}
+          >
+            {leftDrawer}
+          </SwipeableDrawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              flexShrink: 0,
+              display: { md: "none", lg: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: sidebarWidth,
+              },
+            }}
+            open
+          >
+            {leftDrawer}
+          </Drawer>
+          <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
             <Map
               regionList={regionList}
               practiceList={practiceList}
+              defaultRegion={defaultRegion}
               selectedRegion={selectedRegion}
               selectedPractice={selectedPractice}
               handleSelectRegion={setSelectedRegion}
               handleSelectPractice={setSelectedPractice}
             />
-          </Grid>
-          <Grid item lg={3} xl={2}>
-            <Paper
-              elevation={3}
-              square
-              style={{ height: "calc(100vh - 60px)", overflow: "auto" }}
-            >
-              <RightPanel
-                phoList={filteredPhoList}
-                practiceList={practiceList}
-                selectedPho={selectedPho}
-                selectedPractice={selectedPractice}
-                handleSelectPho={(item) => setSelectedPho(item)}
-                handleSelectPractice={(item) => setSelectedPractice(item)}
-              />
-              {phoList && selectedPho && (
-                <Dialog
-                  fullScreen
-                  open={selectedPho != null}
-                  onClose={() => setSelectedPho(null)}
-                >
-                  <ScraperPanel handleClose={() => setSelectedPho(null)} />
-                </Dialog>
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+          <SwipeableDrawer
+            variant="temporary"
+            open={rightOpen}
+            anchor="right"
+            onClose={() => setRightOpen(!rightOpen)}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: "block", sm: "block", md: "block", lg: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: sidebarWidth,
+              },
+            }}
+          >
+            {rightDrawer}
+          </SwipeableDrawer>
+          <Drawer
+            variant="permanent"
+            anchor="right"
+            sx={{
+              flexShrink: 0,
+              display: { md: "none", lg: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: sidebarWidth,
+              },
+            }}
+            open
+          >
+            {rightDrawer}
+          </Drawer>
+        </Box>
       </AppContext.Provider>
       <Error active={error} message={error}></Error>
     </ThemeProvider>

@@ -3,6 +3,7 @@ import { useMap } from "react-leaflet";
 import ReactDOMServer from "react-dom/server";
 import MapPopup from "./MapPopup";
 import { AppContext } from "../ScraperApp";
+import { getPriceByAge } from "../Utils";
 
 require("drmonty-leaflet-awesome-markers/js/leaflet.awesome-markers.js");
 require("drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css");
@@ -19,13 +20,10 @@ export default function MapMarkers({
   const [layer, setLayer] = useState(null);
   const [markers, setMarkers] = useState(null);
 
-  const getMarkerColor = (active) => (active ? "green" : "gray transparent");
+  const getMarkerColor = (active) => (active ? "green" : "gray");
 
   const getMarkerLabel = (all_prices) => {
-    const priceset = all_prices.find(
-      (priceset) => priceset.from_age == context.age
-    );
-    const price = priceset ? priceset.price : "1000";
+    const price = getPriceByAge(all_prices, context.age);
     if (price == "1000") {
       return "?";
     } else if (price == "999") {

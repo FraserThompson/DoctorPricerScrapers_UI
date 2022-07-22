@@ -15,14 +15,17 @@ export default function Map({
   practiceList,
   regionList,
   selectedRegion,
+  defaultRegion,
   selectedPractice,
   handleSelectPractice,
   handleSelectRegion,
 }) {
   const sessionToken = getSessionToken();
 
+  const getSelectedRegion = selectedRegion || defaultRegion;
+
   return (
-    <Box p={0}>
+    <>
       <MapContainer
         center={[51.505, -0.09]}
         zoom={4.94}
@@ -30,12 +33,12 @@ export default function Map({
         scrollWheelZoom={true}
         style={{
           width: "100%",
-          height: "calc(100vh - 60px)",
+          height: "calc(100vh - 63px)",
         }}
       >
-        {!selectedRegion && <CircularProgress />}
-        {selectedRegion && <MapInfoPanel region={selectedRegion} />}
-        {selectedRegion && <MapAgeSelector />}
+        {!getSelectedRegion && <CircularProgress />}
+        {getSelectedRegion && <MapInfoPanel region={getSelectedRegion} />}
+        {getSelectedRegion && <MapAgeSelector />}
         <TileLayer
           apikey="pk.eyJ1IjoiZnJhc2VydGhvbXBzb24iLCJhIjoiY2llcnF2ZXlhMDF0cncwa21yY2tyZjB5aCJ9.iVxJbdbZiWVfHItWtZfKPQ"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -55,9 +58,9 @@ export default function Map({
             handleSelectRegion={handleSelectRegion}
           />
         )}
-        {selectedRegion && <MapBottomInfoPanel region={selectedRegion} />}
+        {getSelectedRegion && <MapBottomInfoPanel region={getSelectedRegion} />}
       </MapContainer>
       {/* {sessionToken && <AdminPanel />} */}
-    </Box>
+    </>
   );
 }
