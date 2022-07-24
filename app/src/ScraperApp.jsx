@@ -21,6 +21,7 @@ import SiteHeader from "./SiteHeader";
 import RegionList from "./RegionList";
 import RightPanel from "./RightPanel";
 import { Box } from "@mui/system";
+import DataPanel from "./DataPanel";
 
 const theme = createTheme({
   palette: {
@@ -154,11 +155,14 @@ export default function ScraperApp() {
   const leftDrawer = (
     <Paper elevation={3} square sx={{ paddingTop: "62px" }}>
       {regionList && (
-        <RegionList
-          data={regionList}
-          handleSelect={setSelectedRegion}
-          selected={selectedRegion}
-        />
+        <>
+          <RegionList
+            data={regionList}
+            handleSelect={setSelectedRegion}
+            selected={selectedRegion}
+          />
+          <DataPanel regions={regionList} />
+        </>
       )}
     </Paper>
   );
@@ -185,8 +189,8 @@ export default function ScraperApp() {
     </Paper>
   );
 
-  const mobileDisplay = { xs: "block", sm: "block", md: "block", lg: "none" }
-  const desktopDisplay = { xs: "none", lg: "none", md: "none", lg: "block" }
+  const mobileDisplay = { xs: "block", sm: "block", md: "block", lg: "none" };
+  const desktopDisplay = { xs: "none", lg: "none", md: "none", lg: "block" };
 
   const sidebarWidth = "300px";
 

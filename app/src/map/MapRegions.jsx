@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import { AppContext } from "../ScraperApp";
 import MapRegionPopup from "./MapRegionPopup";
+import ReactDOMServer from "react-dom/server";
 
 export default function MapRegions({ regions, selected, handleSelectRegion }) {
   const map = useMap();
@@ -22,7 +23,13 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
     tooltips &&
       tooltips.forEach((tooltip, i) =>
         tooltip.setContent(
-          MapRegionPopup(getRegionFromTooltipIndex(i), context.age)
+          ReactDOMServer.renderToString(
+            <MapRegionPopup
+              region={getRegionFromTooltipIndex(i)}
+              defaultRegion={context.defaultRegion}
+              age={context.age}
+            />
+          )
         )
       );
   }, [context.age]);
@@ -80,7 +87,13 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
 
       layer.id = region.id;
 
-      const content = MapRegionPopup(region, context.age, context.defaultRegion);
+      const content = ReactDOMServer.renderToString(
+        <MapRegionPopup
+          region={region}
+          age={context.age}
+          defaultRegion={context.defaultRegion}
+        />
+      );
 
       const tooltip = L.tooltip({ permanent: true })
         .setLatLng(center)

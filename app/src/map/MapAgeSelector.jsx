@@ -1,3 +1,4 @@
+import React, { useContext } from "react";
 import {
   Box,
   FormControl,
@@ -6,7 +7,6 @@ import {
   Paper,
   Select,
 } from "@mui/material";
-import React, { useContext } from "react";
 import { AppContext } from "../ScraperApp";
 
 export default function MapAgeSelector() {
@@ -20,7 +20,7 @@ export default function MapAgeSelector() {
       className="map-info-box"
       style={{
         top: "10px",
-        right: "50px"
+        right: "50px",
       }}
     >
       <Box p={2}>
