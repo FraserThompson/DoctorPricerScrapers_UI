@@ -185,6 +185,9 @@ export default function ScraperApp() {
     </Paper>
   );
 
+  const mobileDisplay = { xs: "block", sm: "block", md: "block", lg: "none" }
+  const desktopDisplay = { xs: "none", lg: "none", md: "none", lg: "block" }
+
   const sidebarWidth = "300px";
 
   return (
@@ -219,7 +222,7 @@ export default function ScraperApp() {
             onClose={() => setLeftOpen(!leftOpen)}
             ModalProps={{ keepMounted: true }}
             sx={{
-              display: { xs: "block", sm: "block", md: "block", lg: "none" },
+              display: mobileDisplay,
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: sidebarWidth,
@@ -232,7 +235,7 @@ export default function ScraperApp() {
             variant="permanent"
             sx={{
               flexShrink: 0,
-              display: { md: "none", lg: "block" },
+              display: desktopDisplay,
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: sidebarWidth,
@@ -260,7 +263,7 @@ export default function ScraperApp() {
             onClose={() => setRightOpen(!rightOpen)}
             ModalProps={{ keepMounted: true }}
             sx={{
-              display: { xs: "block", sm: "block", md: "block", lg: "none" },
+              display: mobileDisplay,
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: sidebarWidth,
@@ -274,7 +277,7 @@ export default function ScraperApp() {
             anchor="right"
             sx={{
               flexShrink: 0,
-              display: { md: "none", lg: "block" },
+              display: desktopDisplay,
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: sidebarWidth,

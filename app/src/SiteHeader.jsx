@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
 import Login from "./Login";
 import { AppContext } from "./ScraperApp";
+import AdminPanel from "./AdminPanel";
 
 export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
   const appContext = useContext(AppContext);
@@ -27,7 +28,7 @@ export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h4" sx={{ color: "white", flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ color: "white", flexGrow: 1 }}>
           DoctorPricer Data
         </Typography>
         {appContext.username && (
@@ -38,6 +39,7 @@ export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
             Logged in as {appContext.username}
           </Typography>
         )}
+        <AdminPanel />
         <Login />
         <IconButton
           color="inherit"

@@ -1,26 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { AppContext } from "../ScraperApp";
-
-export const getRegionAverage = (region, age, decimalPoints = 2) => {
-  const averageRow = region.averages.find(
-    (average) => average.from_age__max == age
-  );
-  return averageRow
-    ? Number(averageRow["price__avg"]).toFixed(decimalPoints)
-    : 0;
-};
-
-export const getRegionDifference = (
-  average,
-  age,
-  defaultRegion,
-  decimalPoints = 2
-) => {
-  if (!defaultRegion) return 0;
-  const regionAverage = getRegionAverage(defaultRegion, age, decimalPoints);
-  return (((average - regionAverage) / regionAverage) * 100).toFixed(2);
-};
+import { getRegionAverage, getRegionDifference } from "../Utils";
 
 export default function MapInfoPanel({ region }) {
   const context = useContext(AppContext);
@@ -67,7 +48,7 @@ export default function MapInfoPanel({ region }) {
   );
 }
 
-function PriceDifferenceIndicator({ percentage }) {
+export function PriceDifferenceIndicator({ percentage }) {
   const color = percentage < 0 ? "green" : "red";
   return (
     <span style={{ color }}>

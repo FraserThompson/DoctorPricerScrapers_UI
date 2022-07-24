@@ -24,7 +24,9 @@ export default function MapMarkers({
 
   const getMarkerLabel = (all_prices) => {
     const price = getPriceByAge(all_prices, context.age);
-    if (price == "1000") {
+    if (price == null || price == undefined) {
+      return "?";
+    } else if (price == "1000") {
       return "?";
     } else if (price == "999") {
       return "X";

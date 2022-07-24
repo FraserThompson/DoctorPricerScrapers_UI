@@ -9,7 +9,7 @@ import {
   ListSubheader,
   Typography,
 } from "@mui/material";
-import { getRegionAverage } from "./map/MapInfoPanel";
+import { getRegionAverage } from "./Utils";
 import { useContext } from "react";
 import { AppContext } from "./ScraperApp";
 

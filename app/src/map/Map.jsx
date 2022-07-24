@@ -1,7 +1,5 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box } from "@mui/material";
-import { getSessionToken } from "../API";
 import { MapContainer, TileLayer } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -20,8 +18,6 @@ export default function Map({
   handleSelectPractice,
   handleSelectRegion,
 }) {
-  const sessionToken = getSessionToken();
-
   const getSelectedRegion = selectedRegion || defaultRegion;
 
   return (
@@ -60,7 +56,6 @@ export default function Map({
         )}
         {getSelectedRegion && <MapBottomInfoPanel region={getSelectedRegion} />}
       </MapContainer>
-      {/* {sessionToken && <AdminPanel />} */}
     </>
   );
 }

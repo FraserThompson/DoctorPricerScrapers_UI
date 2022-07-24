@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
+import { getRegionAverage, getRegionDifference, getRegionMax } from "../Utils";
+import { PriceDifferenceIndicator } from "./MapInfoPanel";
 
-export default function MapRegionPopup(region, age) {
-  const currentAverage = region.averages.find(
-    (average) => average.from_age__max == age
-  );
+export default function MapRegionPopup(region, age, defaultRegion) {
+  const average = getRegionAverage(region, age);
+  const max = getRegionMax(region, age);
+  const regionDifference = getRegionDifference(average, age, defaultRegion);
 
   const content = (
     <div>
@@ -21,15 +23,18 @@ export default function MapRegionPopup(region, age) {
         </strong>{" "}
         enrolling
       </p>
-      {currentAverage && (
+      {average && (
         <>
           <p>
-            <strong>${Number(currentAverage["price__avg"]).toFixed(2)}</strong>{" "}
-            average
+            <strong>${Number(average).toFixed(2)}</strong> average{" "}
+            {regionDifference != 0 && (
+              <>
+                (<PriceDifferenceIndicator percentage={regionDifference} />)
+              </>
+            )}
           </p>
           <p>
-            <strong>${Number(currentAverage["price__max"]).toFixed(2)}</strong>{" "}
-            max
+            <strong>${Number(max).toFixed(2)}</strong> max
           </p>
         </>
       )}

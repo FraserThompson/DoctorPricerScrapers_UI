@@ -40,7 +40,7 @@ export default function PriceHistory({ data }) {
       for (var i = 0; i < ages.length; i++) {
         const age = ages[i];
 
-        if (!value[age]) {
+        if (!value[age] || label == "2018-08") {
           console.log(
             "Price History: Skipping " +
               label +
@@ -71,7 +71,7 @@ export default function PriceHistory({ data }) {
     },
   };
 
-  if (processedData) {
+  if (processedData && processedData.labels.length > 1) {
     const graphData = {
       labels: processedData.labels,
       datasets: [
@@ -108,6 +108,8 @@ export default function PriceHistory({ data }) {
       ],
     };
     return <Line options={options} data={graphData} />;
+  } else if (processedData && processedData.labels.length == 1) {
+    return "";
   } else {
     return <CircularProgress />;
   }

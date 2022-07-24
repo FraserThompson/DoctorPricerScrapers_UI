@@ -21,13 +21,18 @@ export default function MapPopup(practice) {
         </Link>
       </Typography>
       <Typography variant="subtitle1">{practice.pho}</Typography>
-      <Typography variant="body2">
+      <Typography variant="body2" style={{ margin: 0 }}>
         {!practice.active ? "Not Enrolling Patients" : ""}
       </Typography>
-      <Typography variant="body2">
+      <Typography variant="body2" style={{ margin: 0 }}>
+        {practice.restriction ? "Restriction: " + practice.restriction : ""}
+      </Typography>
+      <Typography variant="body2" style={{ margin: 0 }}>
         Last Updated: {practice.updated_at.split("T")[0]}
       </Typography>
-      <Typography variant="body2">Phone: {practice.phone}</Typography>
+      <Typography variant="body2" style={{ margin: 0 }}>
+        Phone: {practice.phone}
+      </Typography>
       <TableContainer component={Paper}>
         <Table aria-label="fee table">
           <TableRow>

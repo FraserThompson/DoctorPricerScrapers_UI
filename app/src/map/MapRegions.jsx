@@ -80,7 +80,7 @@ export default function MapRegions({ regions, selected, handleSelectRegion }) {
 
       layer.id = region.id;
 
-      const content = MapRegionPopup(region, context.age);
+      const content = MapRegionPopup(region, context.age, context.defaultRegion);
 
       const tooltip = L.tooltip({ permanent: true })
         .setLatLng(center)

@@ -9,6 +9,8 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import Averages from "../Averages";
 import PriceHistory from "../PriceHistory";
+import CloseIcon from "@mui/icons-material/Close";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export default function MapBottomInfoPanel({ region }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -18,7 +20,7 @@ export default function MapBottomInfoPanel({ region }) {
       elevation={3}
       className="map-info-box"
       style={{
-        height: !collapsed ? "330px" : "50px",
+        height: !collapsed ? "330px" : "20px",
         overflow: "hidden",
         transition: "height 0.2s",
         width: "calc(100% - 100px)",
@@ -29,14 +31,18 @@ export default function MapBottomInfoPanel({ region }) {
       <Box p={2}>
         <Grid container>
           <Grid item xs={6}>
-            <Typography variant="h6">
-              <IconButton
-                ariba-label="minimize"
-                onClick={() => setCollapsed(!collapsed)}
-              >
-                X
-              </IconButton>
-            </Typography>
+            <IconButton
+              ariba-label="minimize"
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                position: "absolute",
+                top: "0px",
+                left: "0px",
+                padding: "0px",
+              }}
+            >
+              {!collapsed ? <CloseIcon /> : <KeyboardArrowUpIcon />}
+            </IconButton>
             <Typography variant="h6">
               {region.name}: Average fees by age
             </Typography>
