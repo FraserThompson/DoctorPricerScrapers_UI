@@ -19,13 +19,14 @@ export default function MapBottomInfoPanel({ region }) {
     <Paper
       elevation={3}
       className="map-info-box"
-      style={{
+      sx={{
         height: !collapsed ? "330px" : "20px",
         overflow: "hidden",
         transition: "height 0.2s",
         width: "calc(100% - 100px)",
         bottom: "10px",
         left: "50px",
+        display: { xs: "none", sm: "block", md: "block", lg: "block" }
       }}
     >
       <Box p={2}>

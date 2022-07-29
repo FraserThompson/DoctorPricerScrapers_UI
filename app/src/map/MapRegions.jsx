@@ -1,121 +1,78 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useMap } from "react-leaflet";
 import { AppContext } from "../ScraperApp";
+import { Source, Layer, Popup, useMap } from "react-map-gl";
+import polylabel from "polylabel";
+import bbox from "@turf/bbox";
 import MapRegionPopup from "./MapRegionPopup";
-import ReactDOMServer from "react-dom/server";
 
 export default function MapRegions({ regions, selected, handleSelectRegion }) {
-  const map = useMap();
-
-  const [regionLayers, setRegionLayers] = useState(null);
-  const [tooltips, setTooltips] = useState(null);
-  const [tooltipIndexMap, setTooltipIndexMap] = useState(null);
-
+  const { current: map } = useMap();
+  const [hovered, setHovered] = useState(null);
   const context = useContext(AppContext);
-
-  const getRegionFromTooltipIndex = (i) => {
-    const regionId = tooltipIndexMap[i];
-    return regions.find((region) => region.id == regionId);
-  };
-
-  // Update markers when age changes
-  useEffect(() => {
-    tooltips &&
-      tooltips.forEach((tooltip, i) =>
-        tooltip.setContent(
-          ReactDOMServer.renderToString(
-            <MapRegionPopup
-              region={getRegionFromTooltipIndex(i)}
-              defaultRegion={context.defaultRegion}
-              age={context.age}
-            />
-          )
-        )
-      );
-  }, [context.age]);
 
   // Fit bounds when region is selected
   useEffect(() => {
-    if (!regionLayers) return;
-
-    const layers = regionLayers.getLayers();
-    const inactiveLayerStyle = { fillColor: "rgb(51, 136, 255)" };
-    const selectedLayerStyle = { fillColor: "rgb(71, 255, 51)" };
-
     if (!selected) {
-      map.fitBounds(regionLayers.getBounds());
-      tooltips.forEach((tooltip) => tooltip.openOn(map));
-      layers.forEach((layer) => layer.setStyle(inactiveLayerStyle));
+      const initialJson = JSON.parse(context.defaultRegion.geojson);
+      const bounds = bbox(initialJson);
+      map.fitBounds(bounds);
       return;
     }
-
-    tooltips.forEach((tooltip) => tooltip.close());
-
-    layers.forEach((layer) =>
-      layer.id != selected.id
-        ? layer.setStyle(inactiveLayerStyle)
-        : layer.setStyle(selectedLayerStyle)
-    );
-
-    const selectedLayer = layers.find((layer) => layer.id == selected.id);
-
-    map.fitBounds(selectedLayer.getBounds());
+    const layer = map.getSource(selected.name + "-data").serialize();
+    const bounds = bbox(layer.data);
+    map.fitBounds(bounds);
   }, [selected]);
 
   // On init
   useEffect(() => {
-    if (!regions) return;
-
-    const geoJsonGroup = L.geoJSON();
-    geoJsonGroup.addTo(map);
-
-    // Add the region layers to the map
-    regions.forEach((region, i) => {
-      const geoJSON = JSON.parse(region.geojson);
-      geoJsonGroup.addData(geoJSON);
+    regions.forEach((region) => {
+      map.on("click", region.name, () => handleSelectRegion(region));
+      map.on("mousemove", region.name, () => setHovered(region));
+      map.on("mouseleave", region.name, () => setHovered(null));
     });
-
-    // Add the overlays with the data
-    let i = 0;
-    const tooltips = [];
-    const tooltipIndexMap = {};
-
-    geoJsonGroup.eachLayer((layer) => {
-      const bounds = layer.getBounds();
-      const center = bounds.getCenter();
-      const region = regions[i];
-
-      layer.id = region.id;
-
-      const content = ReactDOMServer.renderToString(
-        <MapRegionPopup
-          region={region}
-          age={context.age}
-          defaultRegion={context.defaultRegion}
-        />
-      );
-
-      const tooltip = L.tooltip({ permanent: true })
-        .setLatLng(center)
-        .setContent(content);
-
-      tooltips.push(tooltip);
-      tooltipIndexMap[i] = region.id;
-
-      // Add to map then add click listener
-      const tooltipEl = tooltip.addTo(map).getElement();
-      tooltipEl.addEventListener("click", () => handleSelectRegion(region));
-      tooltipEl.style.pointerEvents = "auto";
-
-      i += 1;
-    });
-
-    setTooltipIndexMap(tooltipIndexMap);
-    setTooltips(tooltips);
-    setRegionLayers(geoJsonGroup);
-
-    map.fitBounds(geoJsonGroup.getBounds());
   }, [regions]);
 
-  return <></>;
+  return regions.map((region) => {
+    const regionJson = JSON.parse(region.geojson);
+    const labelCoords = polylabel(regionJson.coordinates, 1.0);
+
+    return (
+      <Source
+        key={region.name}
+        id={region.name + "-data"}
+        type="geojson"
+        data={regionJson}
+      >
+        <Layer
+          type="fill"
+          id={region.name}
+          paint={{
+            "fill-color":
+              selected?.name == region.name ? "rgb(71, 255, 51)" : "#007cbf",
+            "fill-opacity":
+              hovered?.name == region.name && selected?.name != region.name
+                ? 0.5
+                : 0.2,
+            "fill-outline-color": "black",
+          }}
+        />
+        {selected?.name != region.name && (
+          <Popup
+            longitude={labelCoords[0]}
+            latitude={labelCoords[1]}
+            closeButton={false}
+            closeOnClick={false}
+            focusAfterOpen={false}
+            anchor="bottom"
+          >
+            <MapRegionPopup
+              region={region}
+              defaultRegion={context.defaultRegion}
+              age={context.age}
+            />
+          </Popup>
+        )}
+      </Source>
+    );
+  });
 }

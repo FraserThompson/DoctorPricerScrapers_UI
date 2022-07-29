@@ -16,7 +16,7 @@ import "./css/theme.css";
 
 import { createTheme } from "@mui/material/styles";
 import { getPhoList, getPractices, getRegions } from "./API";
-import Map from "./map/Map";
+import MapWrapper from "./map/MapWrapper";
 import SiteHeader from "./SiteHeader";
 import RegionList from "./RegionList";
 import RightPanel from "./RightPanel";
@@ -85,8 +85,7 @@ export default function ScraperApp() {
     sessionStorage.getItem("dpUsername")
   );
 
-  // Get the list on app start
-  useEffect(() => {
+  const onInit = () => {
     const fetchData = async () => {
       const phoList = await getPhoList();
       const regionList = await getRegions();
@@ -112,10 +111,9 @@ export default function ScraperApp() {
       setFilteredPhoList(phoList);
     };
     fetchData();
-  }, []);
+  };
 
-  // When a region is selected...
-  useEffect(() => {
+  const onRegionSelect = () => {
     if (!regionList) return;
 
     setPracticeList(null);
@@ -140,9 +138,27 @@ export default function ScraperApp() {
     };
 
     fetchData();
-  }, [selectedRegion]);
+  };
 
-  function setTaskState(moduleName, state) {
+  // Get the list on app start
+  useEffect(onInit, []);
+
+  // When a region is selected...
+  useEffect(onRegionSelect, [selectedRegion]);
+
+  async function setTaskState(moduleName, state) {
+    const oldTaskState = taskStates[moduleName];
+
+    // If we're done scraping, fetch it all again
+    if (
+      oldTaskState == "scraping" &&
+      (state == "Done" || state == "Error" || state == "Stopped")
+    ) {
+      const phoList = await getPhoList();
+      setPhoList(phoList);
+      onRegionSelect();
+    }
+
     const newTaskStates = { ...taskStates };
     newTaskStates[moduleName] = state;
     setTaskStates(newTaskStates);
@@ -250,7 +266,7 @@ export default function ScraperApp() {
             {leftDrawer}
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
-            <Map
+            <MapWrapper
               regionList={regionList}
               practiceList={practiceList}
               defaultRegion={defaultRegion}

@@ -1,15 +1,15 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import { MapContainer, TileLayer } from "react-leaflet";
+import Map from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
-import "leaflet/dist/leaflet.css";
 import MapRegions from "./MapRegions";
 import MapMarkers from "./MapMarkers";
 import MapInfoPanel from "./MapInfoPanel";
 import MapBottomInfoPanel from "./MapBottomInfoPanel";
 import MapAgeSelector from "./MapAgeSelector";
 
-export default function Map({
+export default function MapWrapper({
   practiceList,
   regionList,
   selectedRegion,
@@ -22,11 +22,10 @@ export default function Map({
 
   return (
     <>
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={4.94}
-        S
-        scrollWheelZoom={true}
+      <Map
+        initialViewState={{longitude: 178.11319654616165, latitude: -38.220168770389215, zoom: 3}}
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapboxAccessToken="pk.eyJ1IjoiZnJhc2VydGhvbXBzb24iLCJhIjoiY2llcnF2ZXlhMDF0cncwa21yY2tyZjB5aCJ9.iVxJbdbZiWVfHItWtZfKPQ"
         style={{
           width: "100%",
           height: "calc(100vh - 63px)",
@@ -35,11 +34,6 @@ export default function Map({
         {!getSelectedRegion && <CircularProgress />}
         {getSelectedRegion && <MapInfoPanel region={getSelectedRegion} />}
         {getSelectedRegion && <MapAgeSelector />}
-        <TileLayer
-          apikey="pk.eyJ1IjoiZnJhc2VydGhvbXBzb24iLCJhIjoiY2llcnF2ZXlhMDF0cncwa21yY2tyZjB5aCJ9.iVxJbdbZiWVfHItWtZfKPQ"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token={apikey}"
-        />
         {
           <MapMarkers
             practiceList={practiceList}
@@ -55,7 +49,7 @@ export default function Map({
           />
         )}
         {getSelectedRegion && <MapBottomInfoPanel region={getSelectedRegion} />}
-      </MapContainer>
+      </Map>
     </>
   );
 }

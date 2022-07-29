@@ -31,14 +31,6 @@ export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
         <Typography variant="h6" sx={{ color: "white", flexGrow: 1 }}>
           DoctorPricer Data
         </Typography>
-        {appContext.username && (
-          <Typography
-            variant="h6"
-            sx={{ color: "white", display: "inline-block" }}
-          >
-            Logged in as {appContext.username}
-          </Typography>
-        )}
         <AdminPanel />
         <Login />
         <IconButton
@@ -46,7 +38,7 @@ export default function SiteHeader({ handleLeftToggle, handleRightToggle }) {
           aria-label="open drawer"
           edge="end"
           onClick={handleRightToggle}
-          sx={{ mr: 2, display: { lg: "none" } }}
+          sx={{ ml: 2, display: { lg: "none" } }}
         >
           <MenuIcon />
         </IconButton>

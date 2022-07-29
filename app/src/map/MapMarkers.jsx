@@ -1,24 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useMap } from "react-leaflet";
-import ReactDOMServer from "react-dom/server";
+import React, { useContext, useEffect } from "react";
 import MapPopup from "./MapPopup";
 import { AppContext } from "../ScraperApp";
 import { getPriceByAge } from "../Utils";
-
-require("drmonty-leaflet-awesome-markers/js/leaflet.awesome-markers.js");
-require("drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css");
+import { Marker, Popup, useMap } from "react-map-gl";
+import MapPin from "./MapPin";
 
 export default function MapMarkers({
   practiceList,
   selected,
   handleSelectPractice,
 }) {
-  const map = useMap();
-
   const context = useContext(AppContext);
-
-  const [layer, setLayer] = useState(null);
-  const [markers, setMarkers] = useState(null);
+  const { current: map } = useMap();
 
   const getMarkerColor = (active) => (active ? "green" : "gray");
 
@@ -35,85 +28,49 @@ export default function MapMarkers({
     }
   };
 
-  const getMarkerIcon = (practice) => {
-    const iconMarkup = ReactDOMServer.renderToString(
-      <i className=" fa fa-map-marker-alt fa-3x">
-        {getMarkerLabel(practice.all_prices)}
-      </i>
-    );
-
-    return L.divIcon({
-      iconSize: [35, 45],
-      iconAnchor: [17, 42],
-      popupAnchor: [1, -32],
-      shadowAnchor: [10, 12],
-      shadowSize: [36, 16],
-      className:
-        "awesome-marker awesome-marker-icon-" +
-        getMarkerColor(practice.active) +
-        " leaflet-zoom-animated leaflet-interactive map-icon-practice",
-      markerColor: "red",
-      iconColor: "white",
-      html: iconMarkup,
-    });
-  };
-
-  const makeMarkers = (list) => {
-    const markers = list.map((practice, index) => {
-      const coords = [practice.lat, practice.lng];
-
-      const marker = L.marker(coords, {
-        title: practice.name,
-        icon: getMarkerIcon(practice),
-      });
-
-      const markerContent = MapPopup(practice);
-
-      marker.on("click", (e) => handleSelectPractice(index));
-
-      marker.bindPopup(markerContent, {
-        autoclose: false,
-        closeOnClick: false,
-        permanent: true,
-      });
-
-      return marker;
-    });
-
-    return markers;
-  };
-
-  // On init
   useEffect(() => {
-    // If it's null remove all practices from map
-    if (!practiceList) {
-      if (layer) map.removeLayer(layer);
-      setLayer(null);
+    if (!selected && selected != 0) {
       return;
     }
-
-    if (layer) map.removeLayer(layer);
-
-    const markers = makeMarkers(practiceList);
-    const markersLayer = L.featureGroup(markers);
-
-    map.addLayer(markersLayer);
-    setMarkers(markers);
-    setLayer(markersLayer);
-  }, [practiceList]);
-
-  // On practice selected
-  useEffect(() => {
-    selected != undefined && markers[selected].openPopup();
+    const coords = {
+      lat: practiceList[selected].lat,
+      lng: practiceList[selected].lng,
+    };
+    map.flyTo({ center: coords, zoom: 15, duration: 2000 });
   }, [selected]);
 
-  // On age change
-  useEffect(() => {
-    markers &&
-      markers.forEach((marker, index) => {
-        marker.setIcon(getMarkerIcon(practiceList[index]));
-      });
-  }, [context.age]);
-
-  return <></>;
+  return (
+    <>
+      {practiceList &&
+        practiceList.map((practice, index) => {
+          return (
+            <Marker
+              longitude={practice.lng}
+              latitude={practice.lat}
+              anchor="bottom"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                handleSelectPractice(index);
+              }}
+            >
+              <MapPin
+                size={36}
+                label={getMarkerLabel(practice.all_prices)}
+                color={getMarkerColor(practice.active)}
+              />
+            </Marker>
+          );
+        })}
+      {selected && selected != 0 && (
+        <Popup
+          anchor="top"
+          longitude={Number(practiceList[selected].lng)}
+          latitude={Number(practiceList[selected].lat)}
+          onClose={() => handleSelectPractice(null)}
+        >
+          <MapPopup practice={practiceList[selected]} />
+        </Popup>
+      )}
+    </>
+  );
 }
