@@ -40,9 +40,9 @@ export default function MapMarkers({
   }, [selected]);
 
   return (
-    <>
-      {practiceList &&
-        practiceList.map((practice, index) => {
+    practiceList && (
+      <>
+        {practiceList.map((practice, index) => {
           return (
             <Marker
               longitude={practice.lng}
@@ -61,16 +61,17 @@ export default function MapMarkers({
             </Marker>
           );
         })}
-      {selected && selected != 0 && (
-        <Popup
-          anchor="top"
-          longitude={Number(practiceList[selected].lng)}
-          latitude={Number(practiceList[selected].lat)}
-          onClose={() => handleSelectPractice(null)}
-        >
-          <MapPopup practice={practiceList[selected]} />
-        </Popup>
-      )}
-    </>
+        {selected && selected != 0 && (
+          <Popup
+            anchor="top"
+            longitude={Number(practiceList[selected].lng)}
+            latitude={Number(practiceList[selected].lat)}
+            onClose={() => handleSelectPractice(null)}
+          >
+            <MapPopup practice={practiceList[selected]} />
+          </Popup>
+        )}
+      </>
+    )
   );
 }
