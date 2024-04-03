@@ -40,7 +40,7 @@ export default function PriceHistory({ data }) {
       for (var i = 0; i < ages.length; i++) {
         const age = ages[i];
 
-        if (!value[age]) {
+        if (!value[age] || label == "2019") {
           console.log(
             "Price History: Skipping " +
               label +
@@ -60,6 +60,7 @@ export default function PriceHistory({ data }) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
