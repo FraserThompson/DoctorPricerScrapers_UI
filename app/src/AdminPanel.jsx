@@ -115,6 +115,17 @@ export default function AdminPanel() {
                     }
                     label="Dumb Search"
                   />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={(e) => {
+                          handleCheck(e.target.checked, "price_search");
+                        }}
+                        checked={params.includes("price_search")}
+                      />
+                    }
+                    label="Price Search"
+                  />
                 </FormGroup>
               </>
             )}
