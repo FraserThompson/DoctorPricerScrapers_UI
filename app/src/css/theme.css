@@ -20,10 +20,6 @@ main {
     z-index: 500;
 }
 
-.map-info-box .MuiGrid-root {
-    height: 300px;
-}
-
 .mapboxgl-popup-content {
     padding: 5px !important;
 }

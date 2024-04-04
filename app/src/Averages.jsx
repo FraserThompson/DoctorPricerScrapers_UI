@@ -15,7 +15,11 @@ export default function Averages({ data }) {
   if (data && data.length > 0) {
     return (
       <TableContainer component={Paper}>
-        <Table style={{ marginTop: 10 }}>
+        <Table sx={{
+          '& .MuiTableCell-sizeMedium': {
+            padding: '5px 8px',
+          },
+        }} style={{ marginTop: 10 }}>
           <TableHead>
             <TableRow>
               <TableCell><strong>Age</strong></TableCell>
